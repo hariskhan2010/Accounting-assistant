@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -28,15 +28,19 @@ function AnimatedText({ children, delay = 0, style }) {
 }
 
 export function LuxuryScreenHeader({ title, subtitle, sceneHeight = 118, colorIndex = 0 }) {
+  const { width } = useWindowDimensions();
+  const compact = width < 390;
+  const resolvedSceneHeight = compact ? Math.min(sceneHeight, 88) : sceneHeight;
+
   return (
     <View style={styles.wrap}>
-      <LazyGemScene colorIndex={colorIndex} height={sceneHeight} scale={0.55} speed={0.45} />
-      <View style={styles.copy}>
-        <AnimatedText delay={200} style={styles.title}>
+      <LazyGemScene colorIndex={colorIndex} height={resolvedSceneHeight} scale={compact ? 0.44 : 0.55} speed={0.45} />
+      <View style={[styles.copy, compact && styles.copyCompact]}>
+        <AnimatedText delay={200} style={[styles.title, compact && styles.titleCompact]}>
           {title}
         </AnimatedText>
         {subtitle ? (
-          <AnimatedText delay={350} style={styles.subtitle}>
+          <AnimatedText delay={350} style={[styles.subtitle, compact && styles.subtitleCompact]}>
             {subtitle}
           </AnimatedText>
         ) : null}
@@ -52,6 +56,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14
   },
+  copyCompact: {
+    paddingHorizontal: 14,
+    paddingVertical: 11
+  },
   goldDivider: {
     backgroundColor: colors.primary,
     height: 1.5,
@@ -63,10 +71,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     letterSpacing: 0.3
   },
+  subtitleCompact: {
+    fontSize: 12
+  },
   title: {
     color: colors.text,
     fontSize: 26,
     fontWeight: "700"
+  },
+  titleCompact: {
+    fontSize: 22
   },
   wrap: {
     backgroundColor: colors.surface,

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -26,12 +26,16 @@ function AnimatedRow({ children, index }) {
 }
 
 export function DataTable({ columns, rows, emptyLabel = "No records yet" }) {
+  const { width } = useWindowDimensions();
+  const compact = width < 390;
+  const availableWidth = Math.max(280, width - (compact ? 24 : 32));
+
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={styles.table}>
+    <ScrollView horizontal showsHorizontalScrollIndicator contentContainerStyle={styles.scrollContent}>
+      <View style={[styles.table, { minWidth: Math.min(520, availableWidth) }]}>
         <View style={styles.headerRow}>
           {columns.map((column) => (
-            <Text key={column.key} style={[styles.cell, styles.headerCell, column.width && { width: column.width }]}>
+            <Text key={column.key} style={[styles.cell, compact && styles.cellCompact, styles.headerCell, column.width && { width: compact ? Math.max(112, column.width * 0.78) : column.width }]}>
               {column.label}
             </Text>
           ))}
@@ -45,7 +49,7 @@ export function DataTable({ columns, rows, emptyLabel = "No records yet" }) {
           rows.map((row, index) => (
             <AnimatedRow key={row.id} index={index}>
               {columns.map((column) => (
-                <Text key={column.key} style={[styles.cell, column.width && { width: column.width }]}>
+                <Text key={column.key} numberOfLines={2} style={[styles.cell, compact && styles.cellCompact, column.width && { width: compact ? Math.max(112, column.width * 0.78) : column.width }]}>
                   {row[column.key]}
                 </Text>
               ))}
@@ -65,6 +69,12 @@ const styles = StyleSheet.create({
     minWidth: 120,
     paddingHorizontal: 12,
     paddingVertical: 10
+  },
+  cellCompact: {
+    fontSize: 12,
+    minWidth: 96,
+    paddingHorizontal: 9,
+    paddingVertical: 9
   },
   empty: {
     color: colors.textMuted,
@@ -102,12 +112,14 @@ const styles = StyleSheet.create({
   rowAlt: {
     backgroundColor: "rgba(212, 175, 55, 0.03)"
   },
+  scrollContent: {
+    flexGrow: 1
+  },
   table: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: 12,
     borderWidth: 1,
-    minWidth: 520,
     overflow: "hidden"
   }
 });

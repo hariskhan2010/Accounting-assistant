@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -48,22 +48,26 @@ function WaveBar({ index, active }) {
 }
 
 export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
+  const { width } = useWindowDimensions();
   const [imgLoaded, setImgLoaded] = useState(false);
   const speaking = active && isSpeaking;
   const listening = active && !isSpeaking;
+  const size = Math.max(112, Math.min(180, width * 0.38));
+  const containerSize = size + 20;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: containerSize, width: containerSize }]}>
       <View style={styles.waveRow}>
         {Array.from({ length: 7 }).map((_, i) => (
           <WaveBar key={i} index={i} active={speaking} />
         ))}
       </View>
-      <View style={styles.diamondWrap}>
+      <View style={[styles.diamondWrap, { height: size, width: size }]}>
         <Image
           source={require("@/public/diamond.png")}
           style={[
             styles.diamondImg,
+            { height: size, width: size },
             !imgLoaded && styles.hidden,
             speaking && styles.speakingGlow,
             listening && styles.listeningGlow
@@ -83,18 +87,12 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: "center",
-    height: 200,
     justifyContent: "flex-end",
-    left: -15,
-    width: 200
+    left: -8
   },
   diamondImg: {
-    height: 180,
-    width: 180
   },
   diamondWrap: {
-    height: 180,
-    width: 180,
     zIndex: 2
   },
   hidden: {

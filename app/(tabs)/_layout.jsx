@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { colors } from "@/theme";
 
@@ -16,10 +16,14 @@ const icons = {
 };
 
 export default function TabsLayout() {
+  const { width } = useWindowDimensions();
+  const compact = width < 380;
+
   return (
     <Tabs
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarShowLabel: !compact,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
@@ -27,9 +31,9 @@ export default function TabsLayout() {
           borderTopColor: colors.borderLight,
           borderTopWidth: 1,
           elevation: 0,
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 6
+          height: compact ? 56 : 64,
+          paddingBottom: compact ? 6 : 8,
+          paddingTop: compact ? 4 : 6
         },
         tabBarLabelStyle: {
           fontSize: 11,
@@ -39,7 +43,7 @@ export default function TabsLayout() {
         tabBarIcon: ({ color, size, focused }) => (
           <Animated.View entering={FadeIn.duration(200)}>
             <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-              <Ionicons color={color} name={icons[route.name] || "ellipse"} size={focused ? size + 2 : size} />
+              <Ionicons color={color} name={icons[route.name] || "ellipse"} size={focused ? size + (compact ? 1 : 2) : size} />
             </View>
           </Animated.View>
         )

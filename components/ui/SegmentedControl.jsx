@@ -1,15 +1,12 @@
-import { useEffect, useRef } from "react";
-import { Pressable, StyleSheet, Text, View, Animated as RNAnimated } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring
-} from "react-native-reanimated";
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { colors } from "@/theme";
 
 export function SegmentedControl({ options, value, onChange }) {
+  const { width } = useWindowDimensions();
+  const compact = width < 390;
+
   return (
-    <View style={styles.wrap}>
+    <View style={[styles.wrap, compact && styles.wrapCompact]}>
       {options.map((option) => {
         const active = option.id === value || option.key === value;
         const optionValue = option.id ?? option.key;
@@ -18,9 +15,9 @@ export function SegmentedControl({ options, value, onChange }) {
           <Pressable
             key={optionValue}
             onPress={() => onChange(optionValue)}
-            style={[styles.option, active && styles.active]}
+            style={[styles.option, compact && styles.optionCompact, active && styles.active]}
           >
-            <Text style={[styles.text, active && styles.activeText]}>
+            <Text numberOfLines={2} style={[styles.text, compact && styles.textCompact, active && styles.activeText]}>
               {option.name || option.label}
             </Text>
             {active && <View style={styles.activeDot} />}
@@ -60,11 +57,20 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     position: "relative"
   },
+  optionCompact: {
+    minHeight: 38,
+    minWidth: 72,
+    paddingHorizontal: 6,
+    paddingVertical: 7
+  },
   text: {
     color: colors.textMuted,
     fontSize: 12,
     fontWeight: "700",
     textAlign: "center"
+  },
+  textCompact: {
+    fontSize: 11
   },
   wrap: {
     backgroundColor: colors.surfaceMuted,
@@ -75,5 +81,9 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 2,
     padding: 3
+  },
+  wrapCompact: {
+    borderRadius: 9,
+    padding: 2
   }
 });
