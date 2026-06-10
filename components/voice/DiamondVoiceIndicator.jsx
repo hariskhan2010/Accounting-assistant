@@ -8,7 +8,6 @@ import Animated, {
   withTiming,
   withDelay
 } from "react-native-reanimated";
-import { colors } from "@/theme";
 
 const BAR_COLORS = ["#D4AF37", "#F0D060", "#9B59B6", "#C084FC", "#1ABC9C", "#48E5C0", "#D4AF37"];
 
@@ -53,20 +52,6 @@ export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
   const speaking = active && isSpeaking;
   const listening = active && !isSpeaking;
 
-  const spin = useSharedValue(0);
-
-  useEffect(() => {
-    spin.value = withRepeat(
-      withTiming(360, { duration: 3000 }),
-      -1
-    );
-  }, []);
-
-  const spinStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${spin.value}deg` }],
-    transformOrigin: "center"
-  }));
-
   return (
     <View style={styles.container}>
       <View style={styles.waveRow}>
@@ -74,7 +59,7 @@ export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
           <WaveBar key={i} index={i} active={speaking} />
         ))}
       </View>
-      <Animated.View style={[styles.diamondWrap, spinStyle]}>
+      <View style={styles.diamondWrap}>
         <Image
           source={require("@/public/diamond.png")}
           style={[
@@ -86,7 +71,7 @@ export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
           onLoad={() => setImgLoaded(true)}
           resizeMode="contain"
         />
-      </Animated.View>
+      </View>
     </View>
   );
 }
