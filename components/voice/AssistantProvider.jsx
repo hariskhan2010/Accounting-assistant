@@ -92,14 +92,14 @@ export function AssistantProvider({ children }) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    bottom: 58,
+    bottom: 92,
     left: 0,
     position: "absolute",
     right: 0,
     zIndex: 100
   },
   containerCompact: {
-    bottom: 34
+    bottom: 68
   },
   pressed: {
     opacity: 0.8
