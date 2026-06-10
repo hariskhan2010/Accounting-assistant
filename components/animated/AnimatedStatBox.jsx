@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -10,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { colors } from "@/theme";
 
-export function AnimatedStatBox({ label, value, tone = "default", delay = 0 }) {
+export function AnimatedStatBox({ label, value, tone = "default", delay = 0, onPress, showArrow = false, active = false }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
   const borderGlow = useSharedValue(0);
@@ -38,11 +39,18 @@ export function AnimatedStatBox({ label, value, tone = "default", delay = 0 }) {
 
   const accentColor = tone === "success" ? colors.successLight : tone === "danger" ? colors.dangerLight : colors.primaryLight;
 
-  return (
-    <Animated.View style={[styles.box, containerStyle]}>
+  const content = (
+    <>
       <Animated.View style={[styles.glow, glowStyle, { borderColor: accentColor }]} />
       <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
-      <Text style={styles.label}>{label}</Text>
+      <View style={styles.topRow}>
+        <Text style={styles.label}>{label}</Text>
+        {showArrow ? (
+          <View style={[styles.arrowButton, active && styles.arrowButtonActive]}>
+            <Ionicons name={active ? "chevron-up" : "chevron-forward"} size={16} color={active ? colors.background : colors.primary} />
+          </View>
+        ) : null}
+      </View>
       <Text
         style={[
           styles.value,
@@ -53,6 +61,18 @@ export function AnimatedStatBox({ label, value, tone = "default", delay = 0 }) {
       >
         {value}
       </Text>
+    </>
+  );
+
+  return (
+    <Animated.View style={[styles.box, active && styles.boxActive, containerStyle]}>
+      {onPress ? (
+        <Pressable accessibilityRole="button" onPress={onPress} style={styles.pressable}>
+          {content}
+        </Pressable>
+      ) : (
+        <View style={styles.pressable}>{content}</View>
+      )}
     </Animated.View>
   );
 }
@@ -75,7 +95,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     minHeight: 92,
     overflow: "hidden",
-    padding: 14
+  },
+  boxActive: {
+    borderColor: colors.primary
   },
   glow: {
     ...StyleSheet.absoluteFillObject,
@@ -87,8 +109,31 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 1.5,
-    marginBottom: 8,
+    flex: 1,
     textTransform: "uppercase"
+  },
+  arrowButton: {
+    alignItems: "center",
+    borderColor: colors.borderLight,
+    borderRadius: 14,
+    borderWidth: 1,
+    height: 28,
+    justifyContent: "center",
+    width: 28
+  },
+  arrowButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary
+  },
+  pressable: {
+    minHeight: 92,
+    padding: 14
+  },
+  topRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 8
   },
   value: {
     fontSize: 24,
