@@ -23,6 +23,7 @@ export default function RootLayout() {
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="voice" options={{ title: "Urdu Voice Assistant", animation: "slide_from_bottom" }} />
+          <Stack.Screen name="dashboard-breakdown/[metric]" options={{ title: "Entity Breakdown" }} />
           <Stack.Screen name="purchase/[id]" options={{ title: "Purchase Detail" }} />
           <Stack.Screen name="sale/[id]" options={{ title: "Sale Detail" }} />
         </Stack>

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { RevenueChart } from "@/components/charts/RevenueChart";
 import { AnimatedCard } from "@/components/animated/AnimatedCard";
@@ -20,27 +21,21 @@ const statDefs = [
 ];
 
 export default function DashboardScreen() {
+  const router = useRouter();
   const [companyFilter, setCompanyFilter] = useState("all");
-  const [selectedBreakdown, setSelectedBreakdown] = useState(null);
   const { summary } = useProfitSummary(companyFilter);
-  const { summary: companySummary } = useProfitSummary("company-a");
-  const { summary: selfSummary } = useProfitSummary("self");
   const statItems = statDefs.map((def) => ({
     id: def.key,
     ...def,
     value: summary[def.key]
   }));
-  const activeBreakdown = statDefs.find((def) => def.key === selectedBreakdown);
 
-  useEffect(() => {
-    if (companyFilter !== "all") {
-      setSelectedBreakdown(null);
-    }
-  }, [companyFilter]);
-
-  const toggleBreakdown = (key) => {
+  const openBreakdown = (key) => {
     if (companyFilter !== "all") return;
-    setSelectedBreakdown((current) => (current === key ? null : key));
+    router.push({
+      pathname: "/dashboard-breakdown/[metric]",
+      params: { metric: key }
+    });
   };
 
   return (
@@ -68,8 +63,7 @@ export default function DashboardScreen() {
                 key={item.id}
                 delay={400 + statItems.indexOf(item) * 80}
                 label={item.label}
-                active={selectedBreakdown === item.key}
-                onPress={companyFilter === "all" ? () => toggleBreakdown(item.key) : undefined}
+                onPress={companyFilter === "all" ? () => openBreakdown(item.key) : undefined}
                 showArrow={companyFilter === "all"}
                 tone={item.tone}
                 value={item.value}
@@ -78,36 +72,6 @@ export default function DashboardScreen() {
           />
         </View>
       </GsapReveal>
-
-      {companyFilter === "all" && activeBreakdown ? (
-        <FadeInView delay={80}>
-          <View style={styles.breakdownPanel}>
-            <View style={styles.breakdownHeader}>
-              <Text style={styles.breakdownTitle}>{activeBreakdown.label} Breakdown</Text>
-              <Text style={styles.breakdownSubtitle}>Company and Self shown separately</Text>
-            </View>
-            <View style={styles.breakdownRow}>
-              <View>
-                <Text style={styles.breakdownLabel}>Company</Text>
-                <Text style={styles.breakdownHint}>Business account</Text>
-              </View>
-              <Text style={[styles.breakdownValue, activeBreakdown.tone === "danger" && styles.dangerValue, activeBreakdown.tone === "success" && styles.successValue]}>
-                {companySummary[activeBreakdown.key]}
-              </Text>
-            </View>
-            <View style={styles.breakdownDivider} />
-            <View style={styles.breakdownRow}>
-              <View>
-                <Text style={styles.breakdownLabel}>Self</Text>
-                <Text style={styles.breakdownHint}>Personal account</Text>
-              </View>
-              <Text style={[styles.breakdownValue, activeBreakdown.tone === "danger" && styles.dangerValue, activeBreakdown.tone === "success" && styles.successValue]}>
-                {selfSummary[activeBreakdown.key]}
-              </Text>
-            </View>
-          </View>
-        </FadeInView>
-      ) : null}
 
       <GsapReveal delay={220}>
         <AnimatedCard>
@@ -127,60 +91,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     letterSpacing: 0.5
   },
-  breakdownDivider: {
-    backgroundColor: colors.borderLight,
-    height: 1
-  },
-  breakdownHeader: {
-    gap: 3
-  },
-  breakdownHint: {
-    color: colors.textDim,
-    fontSize: 12
-  },
-  breakdownLabel: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: "700"
-  },
-  breakdownPanel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 12,
-    marginHorizontal: 16,
-    padding: 14
-  },
-  breakdownRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 12,
-    justifyContent: "space-between"
-  },
-  breakdownSubtitle: {
-    color: colors.textMuted,
-    fontSize: 12
-  },
-  breakdownTitle: {
-    color: colors.primary,
-    fontSize: 16,
-    fontWeight: "800"
-  },
-  breakdownValue: {
-    color: colors.primary,
-    flexShrink: 0,
-    fontSize: 18,
-    fontVariant: ["tabular-nums"],
-    fontWeight: "800",
-    textAlign: "right"
-  },
   content: {
     gap: 18,
     paddingBottom: 32
-  },
-  dangerValue: {
-    color: colors.danger
   },
   eyebrow: {
     color: colors.textMuted,
@@ -193,9 +106,6 @@ const styles = StyleSheet.create({
   statGrid: {
     gap: 10,
     paddingHorizontal: 16
-  },
-  successValue: {
-    color: colors.success
   },
   header: {
     alignItems: "center",
