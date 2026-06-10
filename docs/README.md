@@ -11,6 +11,7 @@ The app is a mobile and web accounting system for gems, minerals, and raw materi
 - Frontend: React Native, Expo SDK 52, Expo Router, NativeWind, Reanimated.
 - Backend: Supabase PostgreSQL, Supabase Auth, Supabase Storage, Supabase Edge Functions when needed.
 - AI and voice: Gemini Live API for continuous multilingual voice, Gemini-backed financial context, and server-side provider secrets.
+- Wake phrase: "hey accountant" reveals the hidden floating diamond voice indicator.
 - Exports: PDF invoices/reports and Excel financial data.
 
 ## Phase Index

@@ -14,17 +14,29 @@ Implement an Urdu voice assistant that answers business and financial questions 
 - Gemini-backed financial prompt/context service.
 - Audio playback through the live agent stream.
 - Voice chatbot screen.
+- Floating diamond voice indicator hidden by default until the wake phrase is detected.
 - RTL Urdu chat bubbles.
 - Error states for microphone, live agent, and AI response failures.
 
 ## Voice Flow
 
-1. User taps Live on `/app/voice.jsx`.
-2. App opens a live voice session.
-3. User speech is streamed to the live voice agent.
-4. Conversation text and live business data are used to answer financial questions.
-5. The assistant speaks the response through the live audio stream.
-6. Conversation history is shown with RTL chat bubbles.
+1. The floating diamond voice indicator is hidden by default.
+2. User says the wake phrase: "hey accountant".
+3. The diamond indicator animates up from the bottom, spins once, and stops in its fixed position.
+4. User taps Live on `/app/voice.jsx` or opens the assistant flow.
+5. App opens a live voice session.
+6. User speech is streamed to the live voice agent.
+7. Conversation text and live business data are used to answer financial questions.
+8. The assistant speaks the response through the live audio stream.
+9. Conversation history is shown with RTL chat bubbles.
+
+## Voice Indicator Rules
+
+- Keep the diamond and wave final positions unchanged unless the request is specifically about their layout.
+- The diamond remains still after the wake animation finishes.
+- The diamond remains untouchable; tapping it must not open the assistant.
+- The wave stays below the diamond with the current spacing.
+- Do not adjust `DiamondVoiceIndicator.jsx` or `AssistantProvider.jsx` during unrelated dashboard, accounting, or report changes.
 
 ## Data Context
 
@@ -83,6 +95,8 @@ When Supabase or voice providers are not configured, the app still supports type
 ## Acceptance Criteria
 
 - Live voice input works on supported platforms.
+- "Hey accountant" reveals the hidden floating diamond indicator.
+- The indicator moves up from the bottom, spins once, then stops in its final position.
 - The assistant answers in the user's language style.
 - Answers are based on live Supabase business data.
 - Spoken audio playback works through the live stream.
