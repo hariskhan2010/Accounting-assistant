@@ -57,11 +57,6 @@ export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
 
   return (
     <View style={[styles.container, { height: containerSize, width: containerSize }]}>
-      <View style={[styles.waveRow, { bottom: size + 10 }]}>
-        {Array.from({ length: 7 }).map((_, i) => (
-          <WaveBar key={i} index={i} active={speaking} />
-        ))}
-      </View>
       <View style={[styles.diamondWrap, { height: size, width: size }]}>
         <Image
           source={require("@/public/diamond.png")}
@@ -76,6 +71,11 @@ export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
           resizeMode="contain"
         />
       </View>
+      <View style={styles.waveRow}>
+        {Array.from({ length: 7 }).map((_, i) => (
+          <WaveBar key={i} index={i} active={speaking} />
+        ))}
+      </View>
     </View>
   );
 }
@@ -87,7 +87,8 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: "center",
-    justifyContent: "flex-end",
+    gap: 10,
+    justifyContent: "flex-start",
     left: -8
   },
   diamondImg: {
@@ -110,7 +111,6 @@ const styles = StyleSheet.create({
     gap: 3,
     height: 48,
     justifyContent: "center",
-    position: "absolute",
     zIndex: 1
   }
 });
