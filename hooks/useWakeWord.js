@@ -1,7 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Platform } from "react-native";
 
-const WAKE_PHRASES = ["hey assistant", "hey siri", "ok assistant", "hey a sista", "asistent", "hey a sistant", "assistant"];
+const WAKE_PHRASES = [
+  "hey accountant",
+  "ok accountant",
+  "accountant",
+  "hey assistant",
+  "hey siri",
+  "ok assistant",
+  "hey a sista",
+  "asistent",
+  "hey a sistant",
+  "assistant"
+];
 
 export function useWakeWord({ onWakeWordDetected }) {
   const [supported, setSupported] = useState(false);
@@ -51,7 +62,7 @@ export function useWakeWord({ onWakeWordDetected }) {
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = "ur-PK";
+      recognition.lang = "en-US";
 
       recognition.onresult = (event) => {
         for (let i = event.resultIndex; i < event.results.length; i += 1) {
