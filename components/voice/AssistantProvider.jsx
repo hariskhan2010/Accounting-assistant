@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { Pressable, StyleSheet, useWindowDimensions } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useWakeWord } from "@/hooks/useWakeWord";
 import { AssistantOverlay } from "./AssistantOverlay";
@@ -60,20 +60,15 @@ export function AssistantProvider({ children }) {
         <Animated.View
           entering={FadeIn.duration(300)}
           exiting={FadeOut.duration(200)}
-          pointerEvents="box-none"
+          pointerEvents="none"
           style={[styles.container, width < 390 && styles.containerCompact]}
         >
-          <Pressable
-            accessibilityLabel="Activate voice assistant"
-            accessibilityRole="button"
-            onPress={() => activate()}
-            style={({ pressed }) => [styles.touchArea, pressed && styles.pressed]}
-          >
+          <View style={styles.touchArea}>
             <DiamondVoiceIndicator
               active={wakeWord.listening}
               isSpeaking={false}
             />
-          </Pressable>
+          </View>
         </Animated.View>
       ) : (
         <Animated.View
@@ -100,9 +95,6 @@ const styles = StyleSheet.create({
   },
   containerCompact: {
     bottom: 68
-  },
-  pressed: {
-    opacity: 0.8
   },
   touchArea: {
     alignItems: "center",
