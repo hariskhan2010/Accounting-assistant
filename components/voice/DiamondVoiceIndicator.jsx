@@ -53,11 +53,11 @@ export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
   const speaking = active && isSpeaking;
   const listening = active && !isSpeaking;
   const size = Math.max(112, Math.min(180, width * 0.38));
-  const containerSize = size + 20;
+  const containerSize = size + 72;
 
   return (
     <View style={[styles.container, { height: containerSize, width: containerSize }]}>
-      <View style={styles.waveRow}>
+      <View style={[styles.waveRow, { bottom: size + 10 }]}>
         {Array.from({ length: 7 }).map((_, i) => (
           <WaveBar key={i} index={i} active={speaking} />
         ))}
@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
   },
   waveRow: {
     alignItems: "center",
-    bottom: 20,
     flexDirection: "row",
     gap: 3,
     height: 48,
