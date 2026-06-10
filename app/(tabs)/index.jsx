@@ -33,7 +33,7 @@ export default function DashboardScreen() {
       <FadeInView delay={200}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.eyebrow}>Company A + Company B + Self</Text>
+            <Text style={styles.eyebrow}>Company + Self</Text>
             <Text style={styles.title}>Financial Dashboard</Text>
           </View>
         </View>

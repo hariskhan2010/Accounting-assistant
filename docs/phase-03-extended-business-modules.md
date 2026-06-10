@@ -78,4 +78,5 @@ Support:
 - Staff salary totals are included in expense and profit calculations.
 - Reports match the underlying purchase, sale, expense, stock, mineral, and salary data.
 - PDF and Excel exports contain the same values shown in the app.
-- Reports can be generated for Company A, Company B, Self, and all entities.
+- Reports can be generated for Company, Self, and all entities.
+

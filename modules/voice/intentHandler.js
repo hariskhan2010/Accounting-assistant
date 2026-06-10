@@ -119,8 +119,7 @@ function extractAmount(text) {
 
 function extractCompany(text) {
   const textLower = text.toLowerCase();
-  if (/(?:company\s*a|company_a|first\s*company)/i.test(textLower)) return "company-a";
-  if (/(?:company\s*b|company_b|second\s*company)/i.test(textLower)) return "company-b";
+  if (/(?:company|company\s*a|company_a|first\s*company|business)/i.test(textLower)) return "company-a";
   if (/\b(self|apna|personal|my|khud)\b/i.test(textLower)) return "self";
   return null;
 }

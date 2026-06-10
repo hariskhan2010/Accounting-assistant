@@ -25,7 +25,7 @@ Create the base Expo and Supabase application foundation with authentication, na
 - Implement OTP login through Supabase Auth.
 - Add role-ready user profile structure.
 - Create initial database schema migrations.
-- Seed Company A, Company B, and Self.
+- Seed Company and Self.
 - Seed initial expense types and stock categories.
 - Add RTL support for Urdu text surfaces.
 
@@ -73,7 +73,7 @@ Create the base schema for:
 - Main navigation shell exists.
 - Theme primitives and shared UI components exist.
 - Database schema can be recreated from migrations.
-- Company A, Company B, and Self exist as seeded entities.
+- Company and Self exist as seeded entities.
 
 ## Acceptance Criteria
 
@@ -82,3 +82,4 @@ Create the base schema for:
 - Unauthenticated users are redirected to login.
 - All initial business tables include the expected relationship fields.
 - Urdu text components render RTL without layout breakage.
+

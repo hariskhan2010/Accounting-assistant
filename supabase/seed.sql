@@ -1,7 +1,6 @@
 insert into public.companies (name, type)
 values
-  ('Company A', 'company'),
-  ('Company B', 'company'),
+  ('Company', 'company'),
   ('Self', 'self')
 on conflict (name) do update set type = excluded.type;
 

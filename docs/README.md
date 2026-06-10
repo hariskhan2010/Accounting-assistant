@@ -4,7 +4,7 @@ This documentation breaks the project plan from `AGENTS.md` into implementation 
 
 ## Product Summary
 
-The app is a mobile and web accounting system for gems, minerals, and raw material trading businesses. It must support purchases, sales, stock movement, expenses, mineral specimens, staff salaries, financial reporting, two-company plus self account separation, and an Urdu voice assistant.
+The app is a mobile and web accounting system for gems, minerals, and raw material trading businesses. It must support purchases, sales, stock movement, expenses, mineral specimens, staff salaries, financial reporting, company plus self account separation, and an Urdu voice assistant.
 
 ## Required Stack
 
@@ -24,8 +24,9 @@ The app is a mobile and web accounting system for gems, minerals, and raw materi
 ## Cross-Phase Rules
 
 - Every business record that belongs to an entity must include `company_id`.
-- Supported entities are Company A, Company B, and Self.
+- Supported entities are Company and Self.
 - Financial data must be filterable per entity and combined across entities.
 - Stock must distinguish raw materials, polished gems, and mineral specimens.
 - Urdu UI and chatbot surfaces must support right-to-left text.
 - Generated accounting records must preserve traceability back to the source purchase, sale, expense, salary, or specimen record.
+

@@ -8,7 +8,7 @@ Implement the transaction workflows that run the daily accounting operation: pur
 
 ## Scope
 
-- Purchase entry with Company A, Company B, and Self separation.
+- Purchase entry with Company and Self separation.
 - Sale entry with buyer details.
 - Invoice number generation.
 - Invoice PDF generation.
@@ -71,5 +71,6 @@ Supported expense types:
 - Sales reduce stock and increase revenue for the selected entity.
 - Expenses reduce net profit and closing balance.
 - Profit can be calculated per sale and per period.
-- Reports and dashboard data can be filtered by Company A, Company B, Self, or all entities.
+- Reports and dashboard data can be filtered by Company, Self, or all entities.
 - Stock cannot silently become negative without an explicit override path.
+

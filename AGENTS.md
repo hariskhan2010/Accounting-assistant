@@ -13,10 +13,10 @@ A mobile and web application that handles the full financial lifecycle of a gems
 ## 2. Feature Modules
 
 ### 2.1 Purchase & Sale
-- Record purchases of raw materials (two separate companies + self)
+- Record purchases of raw materials (one company + self)
 - Record sales with buyer details and invoice generation
 - Calculate profit per transaction and per period
-- Support for two separate company accounts and personal account
+- Support for one company account and personal account
 
 ### 2.2 Stock & Balance
 - Live stock entry (inward and outward)
@@ -117,7 +117,7 @@ Fonts: Use a serif for headings (Cormorant Garamond or Playfair Display) and a c
 
 ```sql
 -- Companies / entities
-companies (id, name, type)               -- Company A, Company B, Self
+companies (id, name, type)               -- Company, Self
 
 -- Purchases
 purchases (id, company_id, date, item, quantity, unit, unit_price, total, notes)
@@ -247,9 +247,8 @@ Every financial record includes a `company_id` field:
 
 | ID | Entity | Description |
 |---|---|---|
-| 1 | Company A | First business entity |
-| 2 | Company B | Second business entity |
-| 3 | Self | Personal / owner account |
+| 1 | Company | Business entity |
+| 2 | Self | Personal / owner account |
 
 The dashboard will display three tabs or a dropdown to switch between entities. Reports can be generated per entity or combined.
 
@@ -265,7 +264,7 @@ The dashboard will display three tabs or a dropdown to switch between entities. 
 - [ ] Add RTL (right-to-left) support for Urdu text
 
 ### Phase 2 — Core Accounting (Weeks 3–5)
-- [ ] Purchase entry (with two-company separation)
+- [ ] Purchase entry (with company/self separation)
 - [ ] Sale entry and invoice generation
 - [ ] Stock entry (inward/outward, categories)
 - [ ] Expenses module (all 7 expense types)
@@ -310,3 +309,4 @@ The dashboard will display three tabs or a dropdown to switch between entities. 
 ---
 
 *Plan version 1.2 — Updated: Urdu voice (ur-PK), Google Gemini 3 Pro latest model, ElevenLabs TTS*
+

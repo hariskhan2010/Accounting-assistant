@@ -1,6 +1,5 @@
 export const COMPANIES = [
-  { id: "company-a", name: "Company A", type: "company" },
-  { id: "company-b", name: "Company B", type: "company" },
+  { id: "company-a", name: "Company", type: "company" },
   { id: "self", name: "Self", type: "self" }
 ];
 
@@ -38,6 +37,7 @@ export const SALARY_STATUSES = [
 ];
 
 export function getCompanyName(companyId) {
+  if (companyId === "company-b") return "Company";
   return COMPANIES.find((company) => company.id === companyId)?.name || "Unknown";
 }
 

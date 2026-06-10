@@ -35,13 +35,31 @@ function roundCurrency(value) {
 }
 
 function normalizeState(state) {
+  const normalizedState = {
+    ...state,
+    purchases: normalizeCompanyRecords(state?.purchases),
+    sales: normalizeCompanyRecords(state?.sales),
+    expenses: normalizeCompanyRecords(state?.expenses),
+    stockEntries: normalizeCompanyRecords(state?.stockEntries),
+    minerals: normalizeCompanyRecords(state?.minerals),
+    staff: normalizeCompanyRecords(state?.staff),
+    salaries: normalizeCompanyRecords(state?.salaries)
+  };
+
   return {
     ...emptyState,
-    ...state,
+    ...normalizedState,
     companies: COMPANIES,
     expenseTypes: EXPENSE_TYPES,
     stockCategories: STOCK_CATEGORIES
   };
+}
+
+function normalizeCompanyRecords(records = []) {
+  return records.map((record) => ({
+    ...record,
+    companyId: record.companyId === "company-b" ? "company-a" : record.companyId
+  }));
 }
 
 export async function loadAccountingState() {

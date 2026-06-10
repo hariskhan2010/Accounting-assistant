@@ -46,7 +46,7 @@ The chatbot should receive only the business data needed for the answer, such as
 - How much stock is remaining?
 - What is this month's profit?
 - What is the total staff salary amount?
-- What are Company A's sales this month?
+- What are Company sales this month?
 - What is the combined closing balance?
 
 ## Security Rules
@@ -88,3 +88,4 @@ When Supabase or voice providers are not configured, the app still supports type
 - Spoken audio playback works through the live stream.
 - Failures show clear retry states.
 - Secrets are not bundled into the mobile app.
+

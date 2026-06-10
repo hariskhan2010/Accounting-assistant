@@ -41,7 +41,7 @@ Stabilize the app for real use, polish the luxury experience, verify accounting 
 - Specimen profit.
 - Closing balance.
 - Monthly and annual reports.
-- Entity filters for Company A, Company B, Self, and all entities.
+- Entity filters for Company, Self, and all entities.
 - PDF and Excel export values.
 - Authentication redirects.
 - Voice flow error handling.
@@ -71,3 +71,4 @@ Stabilize the app for real use, polish the luxury experience, verify accounting 
 - Dashboard and reports use accurate live data.
 - Build configuration can be reproduced from a clean checkout.
 - Deployment docs explain environment variables, Supabase setup, and external API keys.
+
