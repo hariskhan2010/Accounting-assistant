@@ -53,7 +53,7 @@ export function DiamondVoiceIndicator({ active, onPress, isSpeaking }) {
   const speaking = active && isSpeaking;
   const listening = active && !isSpeaking;
   const size = Math.max(112, Math.min(180, width * 0.38));
-  const containerSize = size + 56;
+  const containerSize = size + 44;
 
   return (
     <View style={[styles.container, { height: containerSize, width: containerSize }]}>
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   diamondImg: {
   },
   diamondWrap: {
+    marginBottom: -12,
     zIndex: 2
   },
   hidden: {
