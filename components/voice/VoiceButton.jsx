@@ -44,12 +44,12 @@ export function VoiceButton({ active, onPress, onPressIn, onPressOut }) {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      accessibilityLabel={active ? "Stop recording" : "Start recording"}
+      accessibilityLabel={active ? "Press and hold to record" : "Press and hold to record"}
       accessibilityRole="button"
       onPress={onPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
-      style={styles.wrapper}
+      style={[styles.wrapper, { userSelect: "none", WebkitUserSelect: "none", touchAction: "manipulation" }]}
     >
       <Animated.View style={[styles.ring, ringStyle]} pointerEvents="none" />
       <Animated.View style={[styles.ringSecondary, ringStyle]} pointerEvents="none" />
