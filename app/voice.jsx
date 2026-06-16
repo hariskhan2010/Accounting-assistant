@@ -10,7 +10,7 @@ import { ChatBubble } from "@/components/voice/ChatBubble";
 import { VoiceButton } from "@/components/voice/VoiceButton";
 import { useVoiceChat } from "@/hooks/useVoiceChat";
 import { buildVoiceBusinessContext } from "@/modules/voice/businessContext";
-import { askGeminiInUrdu } from "@/services/gemini";
+import { askGeminiInUrdu, askGeminiWithAudio } from "@/services/gemini";
 import { isSupabaseConfigured, requireSupabase } from "@/services/supabase";
 import { COMPANY_FILTERS } from "@/modules/accounting/constants";
 import { colors } from "@/theme";
@@ -59,72 +59,109 @@ export default function VoiceScreen() {
   const [textInput, setTextInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [micError, setMicError] = useState("");
   const inputRef = useRef(null);
   const initialized = useRef(false);
-  const recognitionRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const mediaStreamRef = useRef(null);
+  const audioChunksRef = useRef([]);
   const { messages, appendMessage } = useVoiceChat(companyFilter);
 
-  const hasSpeechRecognition = typeof window !== "undefined" &&
-    (window.SpeechRecognition || window.webkitSpeechRecognition);
+  function getSupportedMimeType() {
+    if (typeof MediaRecorder === "undefined") return "";
+    const types = [
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+      "audio/ogg",
+      "audio/mp4"
+    ];
+    return types.find((t) => MediaRecorder.isTypeSupported(t)) || "";
+  }
 
-  const processVoiceInput = useCallback(async (transcript) => {
-    appendMessage("user", transcript, { source: "voice" });
+  const processAudioBlob = useCallback(async (blob, mimeType) => {
+    if (blob.size < 200) return;
+
     setThinking(true);
 
-    try {
-      const context = await buildVoiceBusinessContext(companyFilter);
-      const { answer } = await askGeminiInUrdu({ transcript, context });
-      if (answer) {
-        appendMessage("assistant", answer, { source: "gemini-api" });
-        speakText(answer);
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = async () => {
+      const base64 = reader.result.split(",")[1];
+
+      appendMessage("user", "🎤 (voice message)", { source: "voice" });
+
+      try {
+        const context = await buildVoiceBusinessContext(companyFilter);
+        const { answer } = await askGeminiWithAudio({
+          audioBase64: base64,
+          mimeType,
+          context
+        });
+        if (answer) {
+          appendMessage("assistant", answer, { source: "gemini-api" });
+          speakText(answer);
+        }
+      } catch {
+        appendMessage("assistant", "معاف کیجیے، میں اس وقت آپ کی مدد نہیں کر سکتا۔ براہ کرم دوبارہ کوشش کریں۔", { source: "error" });
+      } finally {
+        setThinking(false);
       }
-    } catch {
-      appendMessage("assistant", "معاف کیجیے، میں اس وقت آپ کی مدد نہیں کر سکتا۔ براہ کرم دوبارہ کوشش کریں۔", { source: "error" });
-    } finally {
-      setThinking(false);
-    }
+    };
   }, [companyFilter, appendMessage]);
 
-  const handlePressIn = useCallback(() => {
-    if (!hasSpeechRecognition) return;
-    setRecording(true);
+  const handlePressIn = useCallback(async () => {
+    if (mediaRecorderRef.current) return;
+    setMicError("");
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = "ur-PK";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    let finalTranscript = "";
-
-    recognition.onresult = (event) => {
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        }
+    try {
+      const mimeType = getSupportedMimeType();
+      if (!mimeType) {
+        setMicError("Recording not supported in this browser.");
+        return;
       }
-    };
 
-    recognition.onend = () => {
-      setRecording(false);
-      if (finalTranscript.trim()) {
-        processVoiceInput(finalTranscript.trim());
-      }
-    };
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      audioChunksRef.current = [];
 
-    recognition.onerror = () => {
-      setRecording(false);
-    };
+      const recorder = new MediaRecorder(stream, { mimeType });
+      mediaRecorderRef.current = recorder;
 
-    recognitionRef.current = recognition;
-    recognition.start();
-  }, [hasSpeechRecognition, processVoiceInput]);
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(audioChunksRef.current, { type: recorder.mimeType });
+        mediaRecorderRef.current = null;
+        mediaStreamRef.current = null;
+        setRecording(false);
+        processAudioBlob(blob, recorder.mimeType);
+      };
+
+      recorder.onerror = () => {
+        stream.getTracks().forEach((t) => t.stop());
+        mediaRecorderRef.current = null;
+        mediaStreamRef.current = null;
+        setRecording(false);
+        setMicError("Recording failed. Try again.");
+      };
+
+      setRecording(true);
+      recorder.start();
+    } catch (err) {
+      setMicError(err.name === "NotAllowedError"
+        ? "Microphone access denied. Allow mic in browser settings."
+        : "Microphone not available.");
+    }
+  }, [processAudioBlob]);
 
   const handlePressOut = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      recognitionRef.current = null;
-    }
+    const recorder = mediaRecorderRef.current;
+    if (!recorder || recorder.state === "inactive") return;
+    recorder.stop();
   }, []);
 
   useEffect(() => {
@@ -198,9 +235,13 @@ export default function VoiceScreen() {
       </ScrollView>
       <FadeInView delay={100} direction="up">
         <View style={styles.footer}>
-          <Text style={styles.hint}>
-            {recording ? "Listening... release to send" : thinking ? "Processing..." : hasSpeechRecognition ? "Hold diamond to speak" : "Type your question below"}
-          </Text>
+          {micError ? (
+            <Text style={styles.micError}>{micError}</Text>
+          ) : (
+            <Text style={styles.hint}>
+              {recording ? "Listening... release to send" : thinking ? "Processing..." : "Hold diamond to speak, or type below"}
+            </Text>
+          )}
           <View style={styles.voiceActions}>
             <View style={styles.voiceAction}>
               <Text style={styles.actionLabel}>{recording ? "Recording" : "Hold to Talk"}</Text>
@@ -277,6 +318,11 @@ const styles = StyleSheet.create({
   },
   hint: {
     color: colors.textMuted,
+    textAlign: "center"
+  },
+  micError: {
+    color: colors.danger,
+    fontSize: 12,
     textAlign: "center"
   },
   inputRow: {

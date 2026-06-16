@@ -11,29 +11,50 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const body = await req.json();
+    const { prompt, transcript, context, audio, audioMimeType } = body;
+
     const apiKey = Deno.env.get("GEMINI_API_KEY");
     const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
 
     if (!apiKey) throw new Error("GEMINI_API_KEY is not configured.");
-    if (!prompt) throw new Error("prompt is required.");
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: prompt }]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.2,
-          maxOutputTokens: 180
+    const parts = [];
+
+    if (audio && audioMimeType) {
+      parts.push({
+        inlineData: {
+          mimeType: audioMimeType,
+          data: audio
         }
-      })
-    });
+      });
+    }
+
+    const systemPrompt = prompt ||
+      `You are a financial assistant for a gems and minerals business.
+Answer only in Urdu. Keep answers brief and natural.
+Today's date: ${new Date().toISOString().split("T")[0]}.
+${context ? `Business context:\n${context}` : ""}
+User message: ${transcript || "(audio message)"}`;
+
+    parts.push({ text: systemPrompt });
+
+    if (!parts.length) throw new Error("No input provided.");
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts }],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 180
+          }
+        })
+      }
+    );
     const data = await response.json();
 
     if (!response.ok) {
