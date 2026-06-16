@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { colors } from "@/theme";
 
-export function VoiceButton({ active, onPress }) {
+export function VoiceButton({ active, onPress, onPressIn, onPressOut }) {
   const pulse = useSharedValue(1);
   const ring = useSharedValue(0);
 
@@ -47,6 +47,8 @@ export function VoiceButton({ active, onPress }) {
       accessibilityLabel={active ? "Stop recording" : "Start recording"}
       accessibilityRole="button"
       onPress={onPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
       style={styles.wrapper}
     >
       <Animated.View style={[styles.ring, ringStyle]} pointerEvents="none" />

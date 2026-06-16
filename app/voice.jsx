@@ -114,16 +114,11 @@ export default function VoiceScreen() {
     setMicError("");
 
     try {
-      const mimeType = getSupportedMimeType();
-      if (!mimeType) {
-        setMicError("Recording not supported in this browser.");
-        return;
-      }
-
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStreamRef.current = stream;
       audioChunksRef.current = [];
 
+      const mimeType = getSupportedMimeType() || "audio/webm";
       const recorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = recorder;
 
@@ -153,20 +148,22 @@ export default function VoiceScreen() {
     } catch (err) {
       setMicError(err.name === "NotAllowedError"
         ? "Microphone access denied. Allow mic in browser settings."
-        : "Microphone not available.");
+        : "Microphone not available. Use text input instead.");
+      setRecording(false);
     }
   }
 
-  const handleToggleRecord = useCallback(() => {
-    if (recording) {
-      const recorder = mediaRecorderRef.current;
-      if (recorder && recorder.state !== "inactive") {
-        recorder.stop();
-      }
-    } else {
-      startRecording();
+  const handlePressIn = useCallback(() => {
+    if (mediaRecorderRef.current) return;
+    startRecording();
+  }, []);
+
+  const handlePressOut = useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop();
     }
-  }, [recording]);
+  }, []);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -246,7 +243,7 @@ export default function VoiceScreen() {
           {micError ? (
             <Text style={styles.micError}>{micError}</Text>
           ) : recording ? (
-            <Text style={styles.hint}>Listening... tap stop to send</Text>
+            <Text style={styles.hint}>Listening... release to send</Text>
           ) : null}
           <View style={styles.inputRow}>
             <TextInput
@@ -268,9 +265,10 @@ export default function VoiceScreen() {
             <View style={styles.voiceAction}>
               <VoiceButton
                 active={recording}
-                onPress={handleToggleRecord}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
               />
-              <Text style={styles.actionLabel}>{recording ? "Tap to stop" : "Tap to talk"}</Text>
+              <Text style={styles.actionLabel}>{recording ? "Recording" : "Hold to Talk"}</Text>
             </View>
           </View>
         </View>
