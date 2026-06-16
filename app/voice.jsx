@@ -110,8 +110,7 @@ export default function VoiceScreen() {
     };
   }, [companyFilter, appendMessage]);
 
-  const handlePressIn = useCallback(async () => {
-    if (mediaRecorderRef.current) return;
+  async function startRecording() {
     setMicError("");
 
     try {
@@ -156,13 +155,18 @@ export default function VoiceScreen() {
         ? "Microphone access denied. Allow mic in browser settings."
         : "Microphone not available.");
     }
-  }, [processAudioBlob]);
+  }
 
-  const handlePressOut = useCallback(() => {
-    const recorder = mediaRecorderRef.current;
-    if (!recorder || recorder.state === "inactive") return;
-    recorder.stop();
-  }, []);
+  const handleToggleRecord = useCallback(() => {
+    if (recording) {
+      const recorder = mediaRecorderRef.current;
+      if (recorder && recorder.state !== "inactive") {
+        recorder.stop();
+      }
+    } else {
+      startRecording();
+    }
+  }, [recording]);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -247,8 +251,7 @@ export default function VoiceScreen() {
               <Text style={styles.actionLabel}>{recording ? "Recording" : "Hold to Talk"}</Text>
               <VoiceButton
                 active={recording}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
+                onPress={handleToggleRecord}
               />
             </View>
           </View>
