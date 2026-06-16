@@ -8,7 +8,6 @@ import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { ChatBubble } from "@/components/voice/ChatBubble";
 import { VoiceButton } from "@/components/voice/VoiceButton";
-import { useGeminiLiveAgent } from "@/hooks/useGeminiLiveAgent";
 import { useVoiceChat } from "@/hooks/useVoiceChat";
 import { buildVoiceBusinessContext } from "@/modules/voice/businessContext";
 import { askGeminiInUrdu } from "@/services/gemini";
@@ -59,14 +58,74 @@ export default function VoiceScreen() {
   const [companyFilter, setCompanyFilter] = useState("all");
   const [textInput, setTextInput] = useState("");
   const [thinking, setThinking] = useState(false);
+  const [recording, setRecording] = useState(false);
   const inputRef = useRef(null);
   const initialized = useRef(false);
+  const recognitionRef = useRef(null);
   const { messages, appendMessage } = useVoiceChat(companyFilter);
 
-  const liveAgent = useGeminiLiveAgent({
-    companyId: companyFilter,
-    onMessage: appendMessage
-  });
+  const hasSpeechRecognition = typeof window !== "undefined" &&
+    (window.SpeechRecognition || window.webkitSpeechRecognition);
+
+  const processVoiceInput = useCallback(async (transcript) => {
+    appendMessage("user", transcript, { source: "voice" });
+    setThinking(true);
+
+    try {
+      const context = await buildVoiceBusinessContext(companyFilter);
+      const { answer } = await askGeminiInUrdu({ transcript, context });
+      if (answer) {
+        appendMessage("assistant", answer, { source: "gemini-api" });
+        speakText(answer);
+      }
+    } catch {
+      appendMessage("assistant", "معاف کیجیے، میں اس وقت آپ کی مدد نہیں کر سکتا۔ براہ کرم دوبارہ کوشش کریں۔", { source: "error" });
+    } finally {
+      setThinking(false);
+    }
+  }, [companyFilter, appendMessage]);
+
+  const handlePressIn = useCallback(() => {
+    if (!hasSpeechRecognition) return;
+    setRecording(true);
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "ur-PK";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    let finalTranscript = "";
+
+    recognition.onresult = (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+    };
+
+    recognition.onend = () => {
+      setRecording(false);
+      if (finalTranscript.trim()) {
+        processVoiceInput(finalTranscript.trim());
+      }
+    };
+
+    recognition.onerror = () => {
+      setRecording(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  }, [hasSpeechRecognition, processVoiceInput]);
+
+  const handlePressOut = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -89,7 +148,6 @@ export default function VoiceScreen() {
 
     setTextInput("");
     appendMessage("user", text, { source: "text" });
-    liveAgent.sendUserText(text);
     setThinking(true);
 
     try {
@@ -104,7 +162,7 @@ export default function VoiceScreen() {
     } finally {
       setThinking(false);
     }
-  }, [textInput, thinking, companyFilter, appendMessage, liveAgent.sendUserText]);
+  }, [textInput, thinking, companyFilter, appendMessage]);
 
   return (
     <View style={styles.screen}>
@@ -140,8 +198,19 @@ export default function VoiceScreen() {
       </ScrollView>
       <FadeInView delay={100} direction="up">
         <View style={styles.footer}>
-          <Text style={styles.hint}>{liveAgent.status}</Text>
-          {liveAgent.error ? <Text style={styles.error}>{liveAgent.error}</Text> : null}
+          <Text style={styles.hint}>
+            {recording ? "Listening... release to send" : thinking ? "Processing..." : hasSpeechRecognition ? "Hold diamond to speak" : "Type your question below"}
+          </Text>
+          <View style={styles.voiceActions}>
+            <View style={styles.voiceAction}>
+              <Text style={styles.actionLabel}>{recording ? "Recording" : "Hold to Talk"}</Text>
+              <VoiceButton
+                active={recording}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
+              />
+            </View>
+          </View>
           <View style={styles.inputRow}>
             <TextInput
               ref={inputRef}
@@ -152,17 +221,11 @@ export default function VoiceScreen() {
               onChangeText={setTextInput}
               onSubmitEditing={handleSendText}
               returnKeyType="send"
-              editable={!thinking}
+              editable={!thinking && !recording}
             />
-            <Pressable onPress={handleSendText} disabled={thinking} style={[styles.sendBtn, thinking && styles.sendBtnDisabled]}>
+            <Pressable onPress={handleSendText} disabled={thinking || recording} style={[styles.sendBtn, (thinking || recording) && styles.sendBtnDisabled]}>
               <Ionicons name="send" size={20} color={colors.background} />
             </Pressable>
-          </View>
-          <View style={styles.voiceActions}>
-            <View style={styles.voiceAction}>
-              <Text style={styles.actionLabel}>Live</Text>
-              <VoiceButton active={liveAgent.connected || liveAgent.connecting} onPress={liveAgent.toggle} />
-            </View>
           </View>
         </View>
       </FadeInView>
@@ -193,11 +256,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     letterSpacing: 0.5
-  },
-  error: {
-    color: colors.danger,
-    fontSize: 12,
-    textAlign: "center"
   },
   footer: {
     alignItems: "center",
