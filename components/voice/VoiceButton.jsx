@@ -56,7 +56,7 @@ export function VoiceButton({ active, onPress, onPressIn, onPressOut }) {
       <Animated.View style={[styles.innerBtn, active && styles.active, pulseStyle]}>
         <Ionicons
           name={active ? "stop" : "mic"}
-          size={30}
+          size={20}
           color={colors.background}
         />
       </Animated.View>
@@ -71,40 +71,40 @@ const styles = StyleSheet.create({
   innerBtn: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 40,
-    height: 72,
+    borderRadius: 22,
+    height: 44,
     justifyContent: "center",
-    width: 72,
+    width: 44,
     zIndex: 2
   },
   ring: {
     ...StyleSheet.absoluteFillObject,
     borderColor: colors.primary,
-    borderRadius: 44,
+    borderRadius: 26,
     borderWidth: 2,
-    height: 88,
-    left: -8,
+    height: 52,
+    left: -4,
     position: "absolute",
-    top: -8,
-    width: 88,
+    top: -4,
+    width: 52,
     zIndex: 1
   },
   ringSecondary: {
     ...StyleSheet.absoluteFillObject,
     borderColor: colors.secondary,
-    borderRadius: 50,
+    borderRadius: 30,
     borderWidth: 1.5,
-    height: 100,
-    left: -14,
+    height: 60,
+    left: -8,
     position: "absolute",
-    top: -14,
-    width: 100,
+    top: -8,
+    width: 60,
     zIndex: 0
   },
   wrapper: {
     alignItems: "center",
-    height: 100,
+    height: 44,
     justifyContent: "center",
-    width: 100
+    width: 44
   }
 });
