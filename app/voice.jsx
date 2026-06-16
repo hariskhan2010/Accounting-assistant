@@ -207,11 +207,14 @@ export default function VoiceScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.messages} showsVerticalScrollIndicator={false}>
+      <View style={styles.headerArea}>
         <LuxuryScreenHeader colorIndex={8} title="Live Voice Assistant" subtitle="Speak in English, Urdu, or Roman Urdu" />
         <FadeInView delay={80}>
           <SegmentedControl options={COMPANY_FILTERS} value={companyFilter} onChange={setCompanyFilter} />
         </FadeInView>
+      </View>
+
+      <ScrollView style={styles.scrollArea} contentContainerStyle={styles.messages} showsVerticalScrollIndicator={false}>
         {messages.length === 0 ? (
           <FadeInView>
             <View style={styles.empty}>
@@ -237,29 +240,19 @@ export default function VoiceScreen() {
           </View>
         ) : null}
       </ScrollView>
+
       <FadeInView delay={100} direction="up">
         <View style={styles.footer}>
           {micError ? (
             <Text style={styles.micError}>{micError}</Text>
-          ) : (
-            <Text style={styles.hint}>
-              {recording ? "Listening... release to send" : thinking ? "Processing..." : "Hold diamond to speak, or type below"}
-            </Text>
-          )}
-          <View style={styles.voiceActions}>
-            <View style={styles.voiceAction}>
-              <Text style={styles.actionLabel}>{recording ? "Recording" : "Hold to Talk"}</Text>
-              <VoiceButton
-                active={recording}
-                onPress={handleToggleRecord}
-              />
-            </View>
-          </View>
+          ) : recording ? (
+            <Text style={styles.hint}>Listening... tap stop to send</Text>
+          ) : null}
           <View style={styles.inputRow}>
             <TextInput
               ref={inputRef}
               style={styles.textInput}
-              placeholder="Type your question in Urdu or English..."
+              placeholder="Type here in Urdu or English..."
               placeholderTextColor={colors.textMuted}
               value={textInput}
               onChangeText={setTextInput}
@@ -270,6 +263,15 @@ export default function VoiceScreen() {
             <Pressable onPress={handleSendText} disabled={thinking || recording} style={[styles.sendBtn, (thinking || recording) && styles.sendBtnDisabled]}>
               <Ionicons name="send" size={20} color={colors.background} />
             </Pressable>
+          </View>
+          <View style={styles.voiceActions}>
+            <View style={styles.voiceAction}>
+              <VoiceButton
+                active={recording}
+                onPress={handleToggleRecord}
+              />
+              <Text style={styles.actionLabel}>{recording ? "Tap to stop" : "Tap to talk"}</Text>
+            </View>
           </View>
         </View>
       </FadeInView>
@@ -282,7 +284,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 11,
     fontWeight: "700",
-    letterSpacing: 1.2,
+    letterSpacing: 0.5,
     textTransform: "uppercase"
   },
   empty: {
@@ -305,8 +307,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderTopColor: colors.borderLight,
     borderTopWidth: 1,
-    gap: 14,
-    padding: 18
+    gap: 10,
+    paddingBottom: 24,
+    paddingHorizontal: 16,
+    paddingTop: 12
   },
   gemChar: {
     fontSize: 48
@@ -319,12 +323,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 80
   },
+  headerArea: {
+    paddingBottom: 8,
+    paddingHorizontal: 16,
+    paddingTop: 12
+  },
   hint: {
     color: colors.textMuted,
-    textAlign: "center"
-  },
-  micError: {
-    color: colors.danger,
     fontSize: 12,
     textAlign: "center"
   },
@@ -338,6 +343,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     gap: 12,
     padding: 16
+  },
+  micError: {
+    color: colors.danger,
+    fontSize: 12,
+    textAlign: "center"
+  },
+  scrollArea: {
+    flex: 1
   },
   screen: {
     backgroundColor: colors.background,
@@ -379,7 +392,7 @@ const styles = StyleSheet.create({
   },
   voiceAction: {
     alignItems: "center",
-    gap: 8
+    gap: 4
   },
   voiceActions: {
     alignItems: "center",
