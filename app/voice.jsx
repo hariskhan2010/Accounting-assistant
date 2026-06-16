@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useCallback, useRef, useState } from "react";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { StaggerList } from "@/components/animated/StaggerList";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,12 +9,15 @@ import { ChatBubble } from "@/components/voice/ChatBubble";
 import { VoiceButton } from "@/components/voice/VoiceButton";
 import { useGeminiLiveAgent } from "@/hooks/useGeminiLiveAgent";
 import { useVoiceChat } from "@/hooks/useVoiceChat";
+import { buildVoiceBusinessContext } from "@/modules/voice/businessContext";
+import { askGeminiInUrdu } from "@/services/gemini";
 import { COMPANY_FILTERS } from "@/modules/accounting/constants";
 import { colors } from "@/theme";
 
 export default function VoiceScreen() {
   const [companyFilter, setCompanyFilter] = useState("all");
   const [textInput, setTextInput] = useState("");
+  const [thinking, setThinking] = useState(false);
   const inputRef = useRef(null);
   const { messages, appendMessage } = useVoiceChat(companyFilter);
   const liveAgent = useGeminiLiveAgent({
@@ -22,13 +25,28 @@ export default function VoiceScreen() {
     onMessage: appendMessage
   });
 
-  const handleSendText = () => {
+  const handleSendText = useCallback(async () => {
     const text = textInput.trim();
-    if (!text) return;
-    appendMessage("user", text, { source: "text" });
-    liveAgent.sendUserText(text);
+    if (!text || thinking) return;
+
     setTextInput("");
-  };
+    appendMessage("user", text, { source: "text" });
+
+    liveAgent.sendUserText(text);
+
+    setThinking(true);
+    try {
+      const context = await buildVoiceBusinessContext(companyFilter);
+      const { answer } = await askGeminiInUrdu({ transcript: text, context });
+      if (answer) {
+        appendMessage("assistant", answer, { source: "gemini-api" });
+      }
+    } catch {
+      appendMessage("assistant", "معاف کیجیے، میں اس وقت آپ کی مدد نہیں کر سکتا۔ براہ کرم دوبارہ کوشش کریں۔", { source: "error" });
+    } finally {
+      setThinking(false);
+    }
+  }, [textInput, thinking, companyFilter, appendMessage, liveAgent.sendUserText]);
 
   return (
     <View style={styles.screen}>
@@ -44,7 +62,7 @@ export default function VoiceScreen() {
                 <Text style={styles.gemChar}>💎</Text>
               </View>
               <Text style={styles.emptyTitle}>Live Financial Assistant</Text>
-              <Text style={styles.emptyHint}>Press Live and ask accounting questions by voice.</Text>
+              <Text style={styles.emptyHint}>Type a question or press Live to speak.</Text>
             </View>
           </FadeInView>
         ) : (
@@ -55,34 +73,39 @@ export default function VoiceScreen() {
             renderItem={(message) => <ChatBubble key={message.id} role={message.role} text={message.text} />}
           />
         )}
+        {thinking ? (
+          <View style={styles.thinkingRow}>
+            <ActivityIndicator size="small" color={colors.primary} />
+            <Text style={styles.thinkingText}>Thinking...</Text>
+          </View>
+        ) : null}
       </ScrollView>
       <FadeInView delay={100} direction="up">
         <View style={styles.footer}>
           <Text style={styles.hint}>{liveAgent.status}</Text>
           {liveAgent.error ? <Text style={styles.error}>{liveAgent.error}</Text> : null}
+          <View style={styles.inputRow}>
+            <TextInput
+              ref={inputRef}
+              style={styles.textInput}
+              placeholder="Type your question in Urdu or English..."
+              placeholderTextColor={colors.textMuted}
+              value={textInput}
+              onChangeText={setTextInput}
+              onSubmitEditing={handleSendText}
+              returnKeyType="send"
+              editable={!thinking}
+            />
+            <Pressable onPress={handleSendText} disabled={thinking} style={[styles.sendBtn, thinking && styles.sendBtnDisabled]}>
+              <Ionicons name="send" size={20} color={colors.background} />
+            </Pressable>
+          </View>
           <View style={styles.voiceActions}>
             <View style={styles.voiceAction}>
               <Text style={styles.actionLabel}>Live</Text>
               <VoiceButton active={liveAgent.connected || liveAgent.connecting} onPress={liveAgent.toggle} />
             </View>
           </View>
-          {liveAgent.connected && liveAgent.textMode ? (
-            <View style={styles.textInputRow}>
-              <TextInput
-                ref={inputRef}
-                style={styles.textInput}
-                placeholder="Type your question in Urdu or English..."
-                placeholderTextColor={colors.textMuted}
-                value={textInput}
-                onChangeText={setTextInput}
-                onSubmitEditing={handleSendText}
-                returnKeyType="send"
-              />
-              <Pressable onPress={handleSendText} style={styles.sendBtn}>
-                <Ionicons name="send" size={20} color={colors.background} />
-              </Pressable>
-            </View>
-          ) : null}
         </View>
       </FadeInView>
     </View>
@@ -140,6 +163,12 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textAlign: "center"
   },
+  inputRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 8,
+    width: "100%"
+  },
   messages: {
     flexGrow: 1,
     gap: 12,
@@ -149,21 +178,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     flex: 1
   },
-  voiceAction: {
+  sendBtn: {
     alignItems: "center",
-    gap: 8
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    height: 42,
+    justifyContent: "center",
+    width: 42
   },
-  voiceActions: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 24,
-    justifyContent: "center"
-  },
-  textInputRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 8,
-    width: "100%"
+  sendBtnDisabled: {
+    opacity: 0.5
   },
   textInput: {
     backgroundColor: colors.surface,
@@ -176,12 +200,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10
   },
-  sendBtn: {
+  thinkingRow: {
     alignItems: "center",
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    height: 42,
+    flexDirection: "row",
+    gap: 8,
     justifyContent: "center",
-    width: 42
+    paddingBottom: 8
+  },
+  thinkingText: {
+    color: colors.primary,
+    fontSize: 13,
+    fontWeight: "600"
+  },
+  voiceAction: {
+    alignItems: "center",
+    gap: 8
+  },
+  voiceActions: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 24,
+    justifyContent: "center"
   }
 });
