@@ -16,64 +16,71 @@ import { isSupabaseConfigured, requireSupabase } from "@/services/supabase";
 import { COMPANY_FILTERS } from "@/modules/accounting/constants";
 import { colors } from "@/theme";
 
-async function speakText(text) {
-  if (!isSupabaseConfigured || !text) return;
+function speakWithBrowser(text) {
   try {
-    const { data } = await requireSupabase().functions.invoke("urdu-elevenlabs-tts", {
-      body: { text }
-    });
-    if (data?.audioBase64) {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: `data:${data.mimeType || "audio/mpeg"};base64,${data.audioBase64}` },
-        { shouldPlay: true }
-      );
-      sound.setOnPlaybackStatusUpdate((s) => {
-        if (s.didJustFinish) sound.unloadAsync();
-      });
-    }
+    if (!window?.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ur-PK";
+    utterance.rate = 0.9;
+    const voices = window.speechSynthesis.getVoices();
+    const urduVoice = voices.find((v) => v.lang.startsWith("ur"));
+    if (urduVoice) utterance.voice = urduVoice;
+    window.speechSynthesis.speak(utterance);
   } catch {}
 }
+
+async function speakText(text) {
+  if (!text) return;
+
+  if (isSupabaseConfigured) {
+    try {
+      const { data } = await requireSupabase().functions.invoke("urdu-elevenlabs-tts", {
+        body: { text }
+      });
+      if (data?.audioBase64) {
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: `data:${data.mimeType || "audio/mpeg"};base64,${data.audioBase64}` },
+          { shouldPlay: true }
+        );
+        sound.setOnPlaybackStatusUpdate((s) => {
+          if (s.didJustFinish) sound.unloadAsync();
+        });
+        return;
+      }
+    } catch {}
+  }
+
+  speakWithBrowser(text);
+}
+
+const WELCOME_TEXT = "Assalamalaikom! Mai aapka financial assistant hoon. Aap kya poochna chahenge?";
 
 export default function VoiceScreen() {
   const [companyFilter, setCompanyFilter] = useState("all");
   const [textInput, setTextInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const inputRef = useRef(null);
-  const greeted = useRef(false);
+  const initialized = useRef(false);
   const { messages, appendMessage } = useVoiceChat(companyFilter);
+
   const liveAgent = useGeminiLiveAgent({
     companyId: companyFilter,
     onMessage: appendMessage
   });
 
   useEffect(() => {
-    if (greeted.current) return;
+    if (initialized.current) return;
+    initialized.current = true;
 
-    const timer = setTimeout(async () => {
-      if (greeted.current) return;
-      greeted.current = true;
+    appendMessage({ id: "welcome", role: "assistant", text: WELCOME_TEXT, source: "local" });
+    speakText(WELCOME_TEXT);
 
-      const context = await buildVoiceBusinessContext(companyFilter).catch(() => ({
-        currentDate: new Date().toISOString().slice(0, 10),
-        entityName: "آپ کا کاروبار",
-        monthRevenue: "0",
-        monthPurchases: "0",
-        monthExpenses: "0",
-        monthSalaries: "0",
-        monthMineralProfit: "0",
-        monthNetProfit: "0",
-        closingBalance: "0",
-        totalStockQuantity: 0
-      }));
-
-      const { answer } = await askGeminiInUrdu({ transcript: "start conversation", context }).catch(() => ({ answer: "" }));
-
-      const text = answer || "Assalamalaikom! Mai aapka financial assistant hoon. Aap kya poochna chahenge?";
-      appendMessage({ id: `welcome-${Date.now()}`, role: "assistant", text, source: "gemini-api" });
-      speakText(text);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    buildVoiceBusinessContext(companyFilter)
+      .then((context) => askGeminiInUrdu({ transcript: "greeting", context }))
+      .then(({ answer }) => {
+        if (answer) speakText(answer);
+      })
+      .catch(() => {});
   }, [companyFilter, appendMessage]);
 
   const handleSendText = useCallback(async () => {
