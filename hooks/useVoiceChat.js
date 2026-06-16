@@ -4,7 +4,7 @@ const starterMessages = [
   {
     id: "assistant-welcome",
     role: "assistant",
-    text: "Assalam o alaikum. Press Live and ask accounting questions in English, Urdu, or Roman Urdu."
+    text: "Assalamalaikom ji sir mai apki kiya madad karsakta ho."
   }
 ];
 

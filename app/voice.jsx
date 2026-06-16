@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useRef, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { StaggerList } from "@/components/animated/StaggerList";
+import { Ionicons } from "@expo/vector-icons";
 import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { ChatBubble } from "@/components/voice/ChatBubble";
@@ -13,11 +14,21 @@ import { colors } from "@/theme";
 
 export default function VoiceScreen() {
   const [companyFilter, setCompanyFilter] = useState("all");
+  const [textInput, setTextInput] = useState("");
+  const inputRef = useRef(null);
   const { messages, appendMessage } = useVoiceChat(companyFilter);
   const liveAgent = useGeminiLiveAgent({
     companyId: companyFilter,
     onMessage: appendMessage
   });
+
+  const handleSendText = () => {
+    const text = textInput.trim();
+    if (!text) return;
+    appendMessage("user", text, { source: "text" });
+    liveAgent.sendUserText(text);
+    setTextInput("");
+  };
 
   return (
     <View style={styles.screen}>
@@ -55,6 +66,23 @@ export default function VoiceScreen() {
               <VoiceButton active={liveAgent.connected || liveAgent.connecting} onPress={liveAgent.toggle} />
             </View>
           </View>
+          {liveAgent.connected && liveAgent.textMode ? (
+            <View style={styles.textInputRow}>
+              <TextInput
+                ref={inputRef}
+                style={styles.textInput}
+                placeholder="Type your question in Urdu or English..."
+                placeholderTextColor={colors.textMuted}
+                value={textInput}
+                onChangeText={setTextInput}
+                onSubmitEditing={handleSendText}
+                returnKeyType="send"
+              />
+              <Pressable onPress={handleSendText} style={styles.sendBtn}>
+                <Ionicons name="send" size={20} color={colors.background} />
+              </Pressable>
+            </View>
+          ) : null}
         </View>
       </FadeInView>
     </View>
@@ -130,5 +158,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 24,
     justifyContent: "center"
+  },
+  textInputRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 8,
+    width: "100%"
+  },
+  textInput: {
+    backgroundColor: colors.surface,
+    borderColor: colors.borderLight,
+    borderRadius: 12,
+    borderWidth: 1,
+    color: colors.textPrimary,
+    flex: 1,
+    fontSize: 15,
+    paddingHorizontal: 14,
+    paddingVertical: 10
+  },
+  sendBtn: {
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    height: 42,
+    justifyContent: "center",
+    width: 42
   }
 });

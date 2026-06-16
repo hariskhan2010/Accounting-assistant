@@ -22,6 +22,17 @@ The app is a mobile and web accounting system for gems, minerals, and raw materi
 4. [Phase 4 - Urdu AI Voice Chatbot](phase-04-urdu-ai-voice-chatbot.md)
 5. [Phase 5 - Polish, Testing, and Deployment](phase-05-polish-testing-deployment.md)
 
+## Current Deployment Notes
+
+- Supabase project ref: `hyjfqsxavrykjzmaaasd`.
+- Assistant Edge Functions deployed on June 12, 2026:
+  - `urdu-gemini-assistant`
+  - `gemini-live-token`
+  - `urdu-elevenlabs-tts`
+- Function secrets were uploaded from `.env` with `npx.cmd supabase secrets set --env-file .env --project-ref hyjfqsxavrykjzmaaasd`.
+- The assistant diagnostic passed with Gemini text answers and Gemini Live token generation.
+- If `supabase` is not recognized on Windows, use `npx.cmd supabase ...`.
+
 ## Cross-Phase Rules
 
 - Every business record that belongs to an entity must include `company_id`.

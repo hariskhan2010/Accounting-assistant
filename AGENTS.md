@@ -306,6 +306,15 @@ The dashboard will display three tabs or a dropdown to switch between entities. 
 - **Backend**: Supabase cloud (managed, no server required)
 - **Updates**: Expo OTA updates (no re-submission for JS changes)
 
+### Current Supabase Assistant Deployment
+
+- Project ref: `hyjfqsxavrykjzmaaasd`
+- Deployed Edge Functions: `urdu-gemini-assistant`, `gemini-live-token`, `urdu-elevenlabs-tts`
+- Secrets uploaded from `.env` using `npx.cmd supabase secrets set --env-file .env --project-ref hyjfqsxavrykjzmaaasd`
+- Verified on June 12, 2026 with `node scripts/check-assistant.js`
+- If Windows cannot find `supabase`, use `npx.cmd supabase ...`
+- `WARNING: Docker is not running` is acceptable for hosted deploys when the CLI still reports `Deployed Functions`.
+
 ---
 
 *Plan version 1.2 — Updated: Urdu voice (ur-PK), Google Gemini 3 Pro latest model, ElevenLabs TTS*

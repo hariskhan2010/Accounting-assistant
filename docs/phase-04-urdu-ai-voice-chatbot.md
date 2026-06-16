@@ -83,14 +83,68 @@ The Expo app calls Supabase Edge Functions so provider secrets are not bundled i
 
 - `urdu-gemini-assistant`
 - `gemini-live-token`
+- `urdu-elevenlabs-tts`
 
 Required Supabase function secrets:
 
 - `GEMINI_API_KEY`
 - `GEMINI_MODEL`
 - `GEMINI_LIVE_MODEL`
+- `ELEVENLABS_API_KEY`
+- `ELEVENLABS_VOICE_ID`
+- `ELEVENLABS_MODEL_ID`
 
 When Supabase or voice providers are not configured, the app still supports typed questions and returns a local financial answer from current business data.
+
+## Deployment Status - June 12, 2026
+
+Supabase project:
+
+- Project ref: `hyjfqsxavrykjzmaaasd`
+- Dashboard: `https://supabase.com/dashboard/project/hyjfqsxavrykjzmaaasd/functions`
+
+Deployed functions:
+
+- `urdu-gemini-assistant`
+- `gemini-live-token`
+- `urdu-elevenlabs-tts`
+
+The Supabase CLI is not installed globally on the current Windows machine, so use `npx.cmd`:
+
+```bash
+npx.cmd supabase functions deploy urdu-gemini-assistant --project-ref hyjfqsxavrykjzmaaasd
+npx.cmd supabase functions deploy gemini-live-token --project-ref hyjfqsxavrykjzmaaasd
+npx.cmd supabase functions deploy urdu-elevenlabs-tts --project-ref hyjfqsxavrykjzmaaasd
+npx.cmd supabase secrets set --env-file .env --project-ref hyjfqsxavrykjzmaaasd
+```
+
+The deployment may print `WARNING: Docker is not running`. This is acceptable for the current hosted deployment flow when the output also says `Deployed Functions`.
+
+Verification command:
+
+```bash
+node scripts/check-assistant.js
+```
+
+Last verified result:
+
+```json
+{
+  "urduGeminiAssistant": {
+    "ok": true,
+    "hasAnswer": true
+  },
+  "geminiLiveToken": {
+    "ok": true,
+    "hasToken": true,
+    "model": "gemini-2.5-flash-native-audio-preview-12-2025"
+  }
+}
+```
+
+Known limitation:
+
+- Gemini Live streaming microphone support is currently implemented for Expo Web. Native iOS and Android still need a native streaming microphone module before live voice mode can work there.
 
 ## Acceptance Criteria
 

@@ -54,6 +54,41 @@ Stabilize the app for real use, polish the luxury experience, verify accounting 
 - Backend: Supabase cloud.
 - Updates: Expo OTA updates for JavaScript changes.
 
+## Supabase Function Deployment
+
+Current project ref:
+
+```bash
+hyjfqsxavrykjzmaaasd
+```
+
+Use `npx.cmd` on Windows if the global `supabase` command is unavailable:
+
+```bash
+npx.cmd supabase projects list
+npx.cmd supabase functions deploy urdu-gemini-assistant --project-ref hyjfqsxavrykjzmaaasd
+npx.cmd supabase functions deploy gemini-live-token --project-ref hyjfqsxavrykjzmaaasd
+npx.cmd supabase functions deploy urdu-elevenlabs-tts --project-ref hyjfqsxavrykjzmaaasd
+npx.cmd supabase secrets set --env-file .env --project-ref hyjfqsxavrykjzmaaasd
+```
+
+Required function secrets:
+
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+- `GEMINI_LIVE_MODEL`
+- `ELEVENLABS_API_KEY`
+- `ELEVENLABS_VOICE_ID`
+- `ELEVENLABS_MODEL_ID`
+
+After deployment, verify the assistant backend:
+
+```bash
+node scripts/check-assistant.js
+```
+
+Expected result: `urduGeminiAssistant.ok` and `geminiLiveToken.ok` are both `true`.
+
 ## Deliverables
 
 - Tested production build configuration.

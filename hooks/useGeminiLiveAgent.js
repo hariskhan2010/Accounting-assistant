@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
 import { buildVoiceBusinessContext } from "@/modules/voice/businessContext";
+import * as Audio from "expo-av";
 import {
   buildGeminiLiveSetup,
   buildGeminiLiveUrl,
@@ -96,6 +96,9 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
   const [connecting, setConnecting] = useState(false);
   const [status, setStatus] = useState("Gemini Live ready");
   const [error, setError] = useState("");
+  const [textMode, setTextMode] = useState(false);
+  const isTextMode = useRef(false);
+  const greetingSent = useRef(false);
 
   const emitMessage = useCallback(
     (role, text) => {
@@ -149,27 +152,41 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
   }, [stopPlayback]);
 
   const playPcmChunk = useCallback(async (base64Audio) => {
-    const audioContext = audioContextRef.current;
-    if (!audioContext || !base64Audio) return;
-
+    if (!base64Audio) return;
     const arrayBuffer = base64ToArrayBuffer(base64Audio);
     if (!arrayBuffer.byteLength) return;
 
-    const samples = pcm16ToFloat32(arrayBuffer);
-    const audioBuffer = audioContext.createBuffer(1, samples.length, GEMINI_LIVE_OUTPUT_SAMPLE_RATE);
-    audioBuffer.copyToChannel(samples, 0);
+    const audioContext = audioContextRef.current;
+    if (audioContext) {
+      const samples = pcm16ToFloat32(arrayBuffer);
+      const audioBuffer = audioContext.createBuffer(1, samples.length, GEMINI_LIVE_OUTPUT_SAMPLE_RATE);
+      audioBuffer.copyToChannel(samples, 0);
 
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.onended = () => {
-      outputSourcesRef.current = outputSourcesRef.current.filter((item) => item !== source);
-    };
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+      source.onended = () => {
+        outputSourcesRef.current = outputSourcesRef.current.filter((item) => item !== source);
+      };
 
-    const startAt = Math.max(audioContext.currentTime, nextPlaybackTimeRef.current);
-    source.start(startAt);
-    outputSourcesRef.current.push(source);
-    nextPlaybackTimeRef.current = startAt + audioBuffer.duration;
+      const startAt = Math.max(audioContext.currentTime, nextPlaybackTimeRef.current);
+      source.start(startAt);
+      outputSourcesRef.current.push(source);
+      nextPlaybackTimeRef.current = startAt + audioBuffer.duration;
+      return;
+    }
+
+    if (isTextMode.current) {
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: `data:audio/pcm;base64,${base64Audio}` },
+          { shouldPlay: true }
+        );
+        sound.setOnPlaybackStatusUpdate((status) => {
+          if (status.didJustFinish) sound.unloadAsync();
+        });
+      } catch {}
+    }
   }, []);
 
   const handleServerMessage = useCallback(
@@ -178,6 +195,14 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
 
       if (response.setupComplete) {
         setStatus("Gemini Live listening");
+        if (!greetingSent.current && socketRef.current?.readyState === globalThis.WebSocket.OPEN) {
+          greetingSent.current = true;
+          socketRef.current.send(JSON.stringify({
+            realtimeInput: {
+              text: "Assalamalaikom"
+            }
+          }));
+        }
         return;
       }
 
@@ -218,18 +243,6 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
   );
 
   const start = useCallback(async () => {
-    if (Platform.OS !== "web") {
-      setError("Gemini Live voice currently needs a streaming microphone module for native iOS/Android. Use Expo web for this mode first.");
-      setStatus("Native live streaming unavailable");
-      return;
-    }
-
-    if (!navigator?.mediaDevices?.getUserMedia) {
-      setError("This browser does not support live microphone capture.");
-      setStatus("Browser mic unavailable");
-      return;
-    }
-
     try {
       setError("");
       setConnecting(true);
@@ -239,9 +252,19 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
       if (tokenError) throw tokenError;
 
       const context = await buildVoiceBusinessContext(companyId);
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      audioContextRef.current = audioContext;
-      nextPlaybackTimeRef.current = audioContext.currentTime;
+
+      greetingSent.current = false;
+
+      let hasAudio = false;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        audioContextRef.current = ctx;
+        nextPlaybackTimeRef.current = ctx.currentTime;
+        hasAudio = true;
+      } catch {
+        isTextMode.current = true;
+        setTextMode(true);
+      }
 
       const socket = new globalThis.WebSocket(buildGeminiLiveUrl(token));
       socketRef.current = socket;
@@ -249,40 +272,52 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
       socket.onopen = async () => {
         socket.send(JSON.stringify(buildGeminiLiveSetup(model, context)));
 
-        setStatus("Opening microphone");
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            channelCount: 1,
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true
-          }
-        });
-        mediaStreamRef.current = mediaStream;
+        if (!hasAudio) {
+          setStatus("Connected (text mode — type your questions)");
+          setConnected(true);
+          setConnecting(false);
+          return;
+        }
 
-        const input = audioContext.createMediaStreamSource(mediaStream);
-        const processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-        processor.onaudioprocess = (audioEvent) => {
-          if (socket.readyState !== globalThis.WebSocket.OPEN) return;
-
-          const inputData = audioEvent.inputBuffer.getChannelData(0);
-          const downsampled = downsampleBuffer(inputData, audioContext.sampleRate, GEMINI_LIVE_INPUT_SAMPLE_RATE);
-          const pcmBuffer = floatTo16BitPcm(downsampled);
-          socket.send(JSON.stringify({
-            realtimeInput: {
-              audio: {
-                data: arrayBufferToBase64(pcmBuffer),
-                mimeType: `audio/pcm;rate=${GEMINI_LIVE_INPUT_SAMPLE_RATE}`
-              }
+        try {
+          setStatus("Opening microphone");
+          const mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              channelCount: 1,
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
             }
-          }));
-        };
+          });
+          mediaStreamRef.current = mediaStream;
 
-        input.connect(processor);
-        processor.connect(audioContext.destination);
-        inputRef.current = input;
-        processorRef.current = processor;
+          const audioContext = audioContextRef.current;
+          const input = audioContext.createMediaStreamSource(mediaStream);
+          const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+          processor.onaudioprocess = (audioEvent) => {
+            if (socket.readyState !== globalThis.WebSocket.OPEN) return;
+
+            const inputData = audioEvent.inputBuffer.getChannelData(0);
+            const downsampled = downsampleBuffer(inputData, audioContext.sampleRate, GEMINI_LIVE_INPUT_SAMPLE_RATE);
+            const pcmBuffer = floatTo16BitPcm(downsampled);
+            socket.send(JSON.stringify({
+              realtimeInput: {
+                audio: {
+                  data: arrayBufferToBase64(pcmBuffer),
+                  mimeType: `audio/pcm;rate=${GEMINI_LIVE_INPUT_SAMPLE_RATE}`
+                }
+              }
+            }));
+          };
+
+          input.connect(processor);
+          processor.connect(audioContext.destination);
+          inputRef.current = input;
+          processorRef.current = processor;
+        } catch {
+          setStatus("Connected (text mode — mic unavailable)");
+        }
 
         setConnected(true);
         setConnecting(false);
@@ -333,6 +368,7 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
     connecting,
     status,
     error,
+    textMode,
     sendUserText,
     toggle
   };
