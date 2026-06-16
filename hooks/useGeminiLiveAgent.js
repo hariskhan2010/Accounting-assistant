@@ -91,6 +91,7 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
   const outputSourcesRef = useRef([]);
   const processorRef = useRef(null);
   const socketRef = useRef(null);
+  const connectedRef = useRef(false);
 
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
@@ -99,6 +100,10 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
   const [textMode, setTextMode] = useState(false);
   const isTextMode = useRef(false);
   const greetingSent = useRef(false);
+
+  useEffect(() => {
+    connectedRef.current = connected;
+  }, [connected]);
 
   const emitMessage = useCallback(
     (role, text) => {
@@ -370,6 +375,8 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
     error,
     textMode,
     sendUserText,
-    toggle
+    toggle,
+    startAgent: start,
+    stopAgent: stop
   };
 }

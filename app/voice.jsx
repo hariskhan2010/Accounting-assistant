@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { StaggerList } from "@/components/animated/StaggerList";
@@ -19,11 +19,23 @@ export default function VoiceScreen() {
   const [textInput, setTextInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const inputRef = useRef(null);
+  const autoStarted = useRef(false);
   const { messages, appendMessage } = useVoiceChat(companyFilter);
   const liveAgent = useGeminiLiveAgent({
     companyId: companyFilter,
     onMessage: appendMessage
   });
+
+  useEffect(() => {
+    if (autoStarted.current) return;
+    autoStarted.current = true;
+
+    const delay = setTimeout(() => {
+      liveAgent.startAgent();
+    }, 600);
+
+    return () => clearTimeout(delay);
+  }, []);
 
   const handleSendText = useCallback(async () => {
     const text = textInput.trim();
