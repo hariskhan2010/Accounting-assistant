@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import * as Audio from "expo-av";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { StaggerList } from "@/components/animated/StaggerList";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,15 +12,34 @@ import { useGeminiLiveAgent } from "@/hooks/useGeminiLiveAgent";
 import { useVoiceChat } from "@/hooks/useVoiceChat";
 import { buildVoiceBusinessContext } from "@/modules/voice/businessContext";
 import { askGeminiInUrdu } from "@/services/gemini";
+import { isSupabaseConfigured, requireSupabase } from "@/services/supabase";
 import { COMPANY_FILTERS } from "@/modules/accounting/constants";
 import { colors } from "@/theme";
+
+async function speakText(text) {
+  if (!isSupabaseConfigured || !text) return;
+  try {
+    const { data } = await requireSupabase().functions.invoke("urdu-elevenlabs-tts", {
+      body: { text }
+    });
+    if (data?.audioBase64) {
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: `data:${data.mimeType || "audio/mpeg"};base64,${data.audioBase64}` },
+        { shouldPlay: true }
+      );
+      sound.setOnPlaybackStatusUpdate((s) => {
+        if (s.didJustFinish) sound.unloadAsync();
+      });
+    }
+  } catch {}
+}
 
 export default function VoiceScreen() {
   const [companyFilter, setCompanyFilter] = useState("all");
   const [textInput, setTextInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const inputRef = useRef(null);
-  const autoStarted = useRef(false);
+  const greeted = useRef(false);
   const { messages, appendMessage } = useVoiceChat(companyFilter);
   const liveAgent = useGeminiLiveAgent({
     companyId: companyFilter,
@@ -27,15 +47,25 @@ export default function VoiceScreen() {
   });
 
   useEffect(() => {
-    if (autoStarted.current) return;
-    autoStarted.current = true;
+    if (greeted.current) return;
+    greeted.current = true;
 
-    const delay = setTimeout(() => {
-      liveAgent.startAgent();
-    }, 600);
+    const init = async () => {
+      const context = await buildVoiceBusinessContext(companyFilter).catch(() => null);
+      if (!context) return;
 
+      const { answer } = await askGeminiInUrdu({ transcript: "start conversation", context }).catch(() => ({ answer: "" }));
+      if (!answer) return;
+
+      const welcomeId = `assistant-welcome-${Date.now()}`;
+      appendMessage({ id: welcomeId, role: "assistant", text: answer, source: "gemini-api" });
+
+      speakText(answer);
+    };
+
+    const delay = setTimeout(init, 500);
     return () => clearTimeout(delay);
-  }, []);
+  }, [companyFilter, appendMessage]);
 
   const handleSendText = useCallback(async () => {
     const text = textInput.trim();
@@ -43,15 +73,15 @@ export default function VoiceScreen() {
 
     setTextInput("");
     appendMessage("user", text, { source: "text" });
-
     liveAgent.sendUserText(text);
-
     setThinking(true);
+
     try {
       const context = await buildVoiceBusinessContext(companyFilter);
       const { answer } = await askGeminiInUrdu({ transcript: text, context });
       if (answer) {
         appendMessage("assistant", answer, { source: "gemini-api" });
+        speakText(answer);
       }
     } catch {
       appendMessage("assistant", "معاف کیجیے، میں اس وقت آپ کی مدد نہیں کر سکتا۔ براہ کرم دوبارہ کوشش کریں۔", { source: "error" });
@@ -73,8 +103,8 @@ export default function VoiceScreen() {
               <View style={styles.gemIcon}>
                 <Text style={styles.gemChar}>💎</Text>
               </View>
-              <Text style={styles.emptyTitle}>Live Financial Assistant</Text>
-              <Text style={styles.emptyHint}>Type a question or press Live to speak.</Text>
+              <Text style={styles.emptyTitle}>Financial Assistant</Text>
+              <Text style={styles.emptyHint}>Ask any question about your business.</Text>
             </View>
           </FadeInView>
         ) : (
