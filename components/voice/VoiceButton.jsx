@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -41,20 +41,16 @@ export function VoiceButton({ active, onPress }) {
     transform: [{ scale: 1 + ring.value * 0.3 }]
   }));
 
-  function handleContextMenu(e) {
-    e.preventDefault();
-  }
-
   return (
-    <Pressable
+    <TouchableOpacity
+      activeOpacity={0.8}
       accessibilityLabel={active ? "Stop recording" : "Start recording"}
       accessibilityRole="button"
       onPress={onPress}
-      onContextMenu={handleContextMenu}
-      style={{ userSelect: "none", WebkitUserSelect: "none" }}
+      style={styles.wrapper}
     >
-      <Animated.View style={[styles.ring, ringStyle]} />
-      <Animated.View style={[styles.ringSecondary, ringStyle]} />
+      <Animated.View style={[styles.ring, ringStyle]} pointerEvents="none" />
+      <Animated.View style={[styles.ringSecondary, ringStyle]} pointerEvents="none" />
       <Animated.View style={[styles.innerBtn, active && styles.active, pulseStyle]}>
         <Ionicons
           name={active ? "stop" : "mic"}
@@ -62,7 +58,7 @@ export function VoiceButton({ active, onPress }) {
           color={colors.background}
         />
       </Animated.View>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 
@@ -102,5 +98,11 @@ const styles = StyleSheet.create({
     top: -14,
     width: 100,
     zIndex: 0
+  },
+  wrapper: {
+    alignItems: "center",
+    height: 100,
+    justifyContent: "center",
+    width: 100
   }
 });
