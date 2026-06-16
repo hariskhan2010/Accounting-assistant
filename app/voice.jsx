@@ -48,23 +48,32 @@ export default function VoiceScreen() {
 
   useEffect(() => {
     if (greeted.current) return;
-    greeted.current = true;
 
-    const init = async () => {
-      const context = await buildVoiceBusinessContext(companyFilter).catch(() => null);
-      if (!context) return;
+    const timer = setTimeout(async () => {
+      if (greeted.current) return;
+      greeted.current = true;
+
+      const context = await buildVoiceBusinessContext(companyFilter).catch(() => ({
+        currentDate: new Date().toISOString().slice(0, 10),
+        entityName: "آپ کا کاروبار",
+        monthRevenue: "0",
+        monthPurchases: "0",
+        monthExpenses: "0",
+        monthSalaries: "0",
+        monthMineralProfit: "0",
+        monthNetProfit: "0",
+        closingBalance: "0",
+        totalStockQuantity: 0
+      }));
 
       const { answer } = await askGeminiInUrdu({ transcript: "start conversation", context }).catch(() => ({ answer: "" }));
-      if (!answer) return;
 
-      const welcomeId = `assistant-welcome-${Date.now()}`;
-      appendMessage({ id: welcomeId, role: "assistant", text: answer, source: "gemini-api" });
+      const text = answer || "Assalamalaikom! Mai aapka financial assistant hoon. Aap kya poochna chahenge?";
+      appendMessage({ id: `welcome-${Date.now()}`, role: "assistant", text, source: "gemini-api" });
+      speakText(text);
+    }, 500);
 
-      speakText(answer);
-    };
-
-    const delay = setTimeout(init, 500);
-    return () => clearTimeout(delay);
+    return () => clearTimeout(timer);
   }, [companyFilter, appendMessage]);
 
   const handleSendText = useCallback(async () => {
