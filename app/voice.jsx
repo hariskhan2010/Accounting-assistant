@@ -238,52 +238,41 @@ export default function VoiceScreen() {
         ) : null}
       </ScrollView>
 
-      <FadeInView delay={100} direction="up">
-        <View style={styles.footer}>
-          {micError ? (
-            <Text style={styles.micError}>{micError}</Text>
-          ) : recording ? (
-            <Text style={styles.hint}>Listening... release to send</Text>
-          ) : null}
-          <View style={styles.inputRow}>
-            <TextInput
-              ref={inputRef}
-              style={styles.textInput}
-              placeholder="Type here in Urdu or English..."
-              placeholderTextColor={colors.textMuted}
-              value={textInput}
-              onChangeText={setTextInput}
-              onSubmitEditing={handleSendText}
-              returnKeyType="send"
-              editable={!thinking && !recording}
-            />
-            <Pressable onPress={handleSendText} disabled={thinking || recording} style={[styles.sendBtn, (thinking || recording) && styles.sendBtnDisabled]}>
-              <Ionicons name="send" size={20} color={colors.background} />
-            </Pressable>
-          </View>
-          <View style={styles.voiceActions}>
-            <View style={styles.voiceAction}>
-              <VoiceButton
-                active={recording}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-              />
-              <Text style={styles.actionLabel}>{recording ? "Recording" : "Hold to Talk"}</Text>
-            </View>
-          </View>
+      <View style={styles.bottomBar}>
+        {micError ? <Text style={styles.micError}>{micError}</Text> : null}
+        <View style={styles.inputRow}>
+          <VoiceButton
+            active={recording}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+          />
+          <TextInput
+            ref={inputRef}
+            style={styles.textInput}
+            placeholder={recording ? "Listening..." : "Type in Urdu / English..."}
+            placeholderTextColor={colors.textMuted}
+            value={textInput}
+            onChangeText={setTextInput}
+            onSubmitEditing={handleSendText}
+            returnKeyType="send"
+            editable={!thinking && !recording}
+          />
+          <Pressable onPress={handleSendText} disabled={thinking || recording} style={[styles.sendBtn, (thinking || recording) && styles.sendBtnDisabled]}>
+            <Ionicons name="send" size={20} color={colors.background} />
+          </Pressable>
         </View>
-      </FadeInView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  actionLabel: {
-    color: colors.textMuted,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-    textTransform: "uppercase"
+  bottomBar: {
+    borderTopColor: colors.borderLight,
+    borderTopWidth: 1,
+    paddingBottom: 16,
+    paddingHorizontal: 8,
+    paddingTop: 8
   },
   empty: {
     alignItems: "center",
@@ -301,15 +290,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 0.5
   },
-  footer: {
-    alignItems: "center",
-    borderTopColor: colors.borderLight,
-    borderTopWidth: 1,
-    gap: 10,
-    paddingBottom: 24,
-    paddingHorizontal: 16,
-    paddingTop: 12
-  },
   gemChar: {
     fontSize: 48
   },
@@ -326,15 +306,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12
   },
-  hint: {
-    color: colors.textMuted,
-    fontSize: 12,
-    textAlign: "center"
-  },
   inputRow: {
     alignItems: "center",
     flexDirection: "row",
-    gap: 8,
+    gap: 6,
     width: "100%"
   },
   messages: {
@@ -345,6 +320,7 @@ const styles = StyleSheet.create({
   micError: {
     color: colors.danger,
     fontSize: 12,
+    paddingBottom: 4,
     textAlign: "center"
   },
   scrollArea: {
@@ -387,15 +363,5 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 13,
     fontWeight: "600"
-  },
-  voiceAction: {
-    alignItems: "center",
-    gap: 4
-  },
-  voiceActions: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 24,
-    justifyContent: "center"
   }
 });
