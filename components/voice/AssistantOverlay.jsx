@@ -88,13 +88,6 @@ function AssistantOverlayInner({ companyId, onDismiss, onSpeakingChange }) {
       text: `Kis mein ${typeLabel} add karo? **Self** ya **Company**?`,
       source: "action"
     });
-
-    if (liveAgentRef.current?.sendUserText) {
-      skipNextUser.current = true;
-      liveAgentRef.current.sendUserText(
-        `[System: Ask the user whether to add this ${typeLabel} in Self or Company account. Wait for their response.]`
-      );
-    }
   }, [appendMessage]);
 
   const executeWithCompany = useCallback((command, resolvedCompanyId) => {
