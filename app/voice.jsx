@@ -147,7 +147,7 @@ export default function VoiceScreen() {
             baseDelay={60}
             direction="left"
             items={messages}
-            renderItem={(message) => <ChatBubble key={message.id} role={message.role} text={message.text} />}
+            renderItem={(message) => <ChatBubble key={message.id} role={message.role} text={message.text} source={message.source} />}
           />
         )}
         {thinking ? (

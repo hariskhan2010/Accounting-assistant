@@ -1,16 +1,60 @@
 import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/theme";
 
-export function ChatBubble({ role, text }) {
+export function ChatBubble({ role, text, source }) {
   const assistant = role === "assistant";
+  const isAction = source === "action";
+  const isError = source === "error";
+  const isSuccess = isAction && text.startsWith("✅");
+
+  const borderColor = isSuccess
+    ? `${colors.success}44`
+    : isError
+      ? `${colors.danger}44`
+      : assistant
+        ? `${colors.primary}33`
+        : `${colors.secondary}33`;
+
+  const badgeColor = isSuccess
+    ? colors.success
+    : isError
+      ? colors.danger
+      : assistant
+        ? colors.primary
+        : colors.secondary;
+
+  const parts = text.split(/(Rs\s[\d,]+)/g);
 
   return (
-    <View style={[styles.bubble, assistant ? styles.assistant : styles.user]}>
+    <View style={[styles.bubble, { borderColor }, assistant ? styles.assistant : styles.user]}>
       <View style={styles.roleIndicator}>
-        <View style={[styles.dot, { backgroundColor: assistant ? colors.primary : colors.secondary }]} />
-        <Text style={styles.roleLabel}>{assistant ? "Assistant" : "You"}</Text>
+        <Ionicons
+          name={
+            isSuccess
+              ? "checkmark-circle"
+              : isError
+                ? "alert-circle"
+                : assistant
+                  ? "diamond"
+                  : "person-circle"
+          }
+          size={14}
+          color={badgeColor}
+        />
+        <Text style={[styles.roleLabel, { color: badgeColor }]}>
+          {isSuccess ? "Success" : isError ? "Error" : assistant ? "Assistant" : "You"}
+        </Text>
       </View>
-      <Text style={styles.text}>{text}</Text>
+      <Text style={styles.text}>
+        {parts.map((part, i) =>
+          /^Rs\s[\d,]+$/.test(part) ? (
+            <Text key={i} style={styles.highlight}>{part}</Text>
+          ) : (
+            <Text key={i}>{part}</Text>
+          )
+        )}
+      </Text>
     </View>
   );
 }
@@ -21,35 +65,32 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface
   },
   bubble: {
-    borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    maxWidth: "88%",
-    paddingHorizontal: 14,
-    paddingVertical: 10
+    maxWidth: "90%",
+    paddingHorizontal: 16,
+    paddingVertical: 12
   },
-  dot: {
-    borderRadius: 4,
-    height: 8,
-    width: 8
+  highlight: {
+    color: colors.primaryLight,
+    fontWeight: "700"
   },
   roleIndicator: {
     alignItems: "center",
     flexDirection: "row",
     gap: 6,
-    marginBottom: 6
+    marginBottom: 8
   },
   roleLabel: {
-    color: colors.textMuted,
     fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 0.5,
+    fontWeight: "800",
+    letterSpacing: 1,
     textTransform: "uppercase"
   },
   text: {
     color: colors.text,
     fontSize: 15,
-    lineHeight: 23,
+    lineHeight: 24,
     textAlign: "right",
     writingDirection: "rtl"
   },

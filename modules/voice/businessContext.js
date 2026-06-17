@@ -86,6 +86,7 @@ export function answerLocallyInUrdu(transcript, context) {
   const profitWords = ["profit", "منافع", "نفع"];
   const salaryWords = ["salary", "salaries", "تنخواہ", "تنخواہیں"];
   const balanceWords = ["balance", "closing", "بیلنس", "اختتامی"];
+  const expenseWords = ["expense", "kharch", "خرچ", "مصارف"];
 
   if (stockWords.some((word) => question.includes(word))) {
     return `${context.entityName} ka present stock total ${context.totalStockQuantity} units hai.`;
@@ -105,6 +106,10 @@ export function answerLocallyInUrdu(transcript, context) {
 
   if (revenueWords.some((word) => question.includes(word))) {
     return `${context.entityName} ki is mahine ki aamdani ${formatMoney(context.monthRevenue)} hai.`;
+  }
+
+  if (expenseWords.some((word) => question.includes(word))) {
+    return `${context.entityName} ka is mahine ka total kharch ${formatMoney(context.monthExpenses)} hai.`;
   }
 
   return `${context.entityName} ke mutabiq is mahine aamdani ${formatMoney(context.monthRevenue)} hai, kharch ${formatMoney(context.monthExpenses)}, tankhwa ${formatMoney(context.monthSalaries)}, aur khalis munafa ${formatMoney(context.monthNetProfit)} hai.`;
