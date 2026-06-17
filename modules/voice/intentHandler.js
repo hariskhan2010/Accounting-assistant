@@ -128,7 +128,7 @@ const patterns = {
 };
 
 function extractAmount(text) {
-  const numMatch = text.match(/(?:rs\.?\s*)?(\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?)/i);
+  const numMatch = text.match(/(?:rs\.?\s*)?(\d+(?:,\d{3})*(?:\.\d{1,2})?)/i);
   if (numMatch) return Number(numMatch[1].replace(/,/g, ""));
 
   const wordMap = {

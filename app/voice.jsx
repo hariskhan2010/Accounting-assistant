@@ -52,7 +52,7 @@ export default function VoiceScreen() {
       appendMessage({
         id: `action-${Date.now()}`,
         role: "assistant",
-        text: `✅ ${result.message}`,
+        text: result.success ? `✅ ${result.message}` : `❌ ${result.message}`,
         source: "action"
       });
     });
@@ -93,7 +93,7 @@ export default function VoiceScreen() {
       appendMessage({
         id: `action-${Date.now()}`,
         role: "assistant",
-        text: `✅ ${result.message}`,
+        text: result.success ? `✅ ${result.message}` : `❌ ${result.message}`,
         source: "action"
       });
       return;
