@@ -67,6 +67,7 @@ export default function PurchasesScreen() {
     }
 
     setForm({ ...initialForm, companyId: form.companyId, date: form.date });
+    Alert.alert("Success", `Purchase of ${form.item} has been saved.`);
     refresh();
   };
 

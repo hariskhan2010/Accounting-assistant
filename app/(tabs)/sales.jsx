@@ -85,6 +85,7 @@ export default function SalesScreen() {
       date: form.date,
       invoiceNo: generateInvoiceNumber(state.sales.length + 1)
     });
+    Alert.alert("Success", `Sale to ${form.buyer} for ${form.item} has been saved.`);
     refresh();
   };
 

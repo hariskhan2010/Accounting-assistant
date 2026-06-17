@@ -62,6 +62,7 @@ export default function ExpensesScreen() {
     }
 
     setForm({ ...initialForm, companyId: form.companyId, date: form.date, type: form.type });
+    Alert.alert("Success", `Expense of ${formatMoney(form.amount)} has been saved.`);
     refresh();
   };
 
