@@ -31,7 +31,7 @@ export async function buildVoiceBusinessContext(companyId = "all") {
   const monthSummary = calculateSummary(monthlyState, companyId);
   const stockBalances = calculateStockBalances(state.stockEntries, companyId);
   const totalStockQuantity = stockBalances.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-  const entityName = companyId === "all" ? "تمام اکاؤنٹس" : getCompanyName(companyId);
+  const entityName = companyId === "all" ? "Tamam Accounts" : getCompanyName(companyId);
 
   return {
     currentDate: new Date().toISOString().slice(0, 10),
@@ -62,8 +62,9 @@ export async function buildVoiceBusinessContext(companyId = "all") {
 export function buildGeminiPrompt(transcript, context) {
   return [
     "You are a financial assistant for a gems and minerals trading business.",
-    "The user asks in Urdu. Always answer only in Urdu.",
-    "Use only the provided business data. If the data is missing, say that clearly in Urdu.",
+    "The user asks in Roman Urdu (Urdu written in English script). Always answer only in Roman Urdu using English alphabet, like 'aap ka stock 50 units hai'.",
+    "Never use Arabic/Urdu script. Use English letters only.",
+    "Use only the provided business data. If the data is missing, say that clearly in Roman Urdu.",
     `Current date: ${context.currentDate}`,
     `Entity: ${context.entityName}`,
     `This month revenue: ${formatMoney(context.monthRevenue)}`,
@@ -87,24 +88,24 @@ export function answerLocallyInUrdu(transcript, context) {
   const balanceWords = ["balance", "closing", "بیلنس", "اختتامی"];
 
   if (stockWords.some((word) => question.includes(word))) {
-    return `${context.entityName} کا موجودہ اسٹاک کل ${context.totalStockQuantity} یونٹس ہے۔`;
+    return `${context.entityName} ka present stock total ${context.totalStockQuantity} units hai.`;
   }
 
   if (salaryWords.some((word) => question.includes(word))) {
-    return `${context.entityName} کی اس مہینے کی تنخواہوں کی کل رقم ${formatMoney(context.monthSalaries)} ہے۔`;
+    return `${context.entityName} ki is mahine ki tankhwaon ki total raqam ${formatMoney(context.monthSalaries)} hai.`;
   }
 
   if (profitWords.some((word) => question.includes(word))) {
-    return `${context.entityName} کا اس مہینے کا خالص منافع ${formatMoney(context.monthNetProfit)} ہے۔`;
+    return `${context.entityName} ka is mahine ka khalis munafa ${formatMoney(context.monthNetProfit)} hai.`;
   }
 
   if (balanceWords.some((word) => question.includes(word))) {
-    return `${context.entityName} کا موجودہ کلوزنگ بیلنس ${formatMoney(context.closingBalance)} ہے۔`;
+    return `${context.entityName} ka present closing balance ${formatMoney(context.closingBalance)} hai.`;
   }
 
   if (revenueWords.some((word) => question.includes(word))) {
-    return `${context.entityName} کی اس مہینے کی آمدنی ${formatMoney(context.monthRevenue)} ہے۔`;
+    return `${context.entityName} ki is mahine ki aamdani ${formatMoney(context.monthRevenue)} hai.`;
   }
 
-  return `${context.entityName} کے مطابق اس مہینے آمدنی ${formatMoney(context.monthRevenue)}، اخراجات ${formatMoney(context.monthExpenses)}، تنخواہیں ${formatMoney(context.monthSalaries)}، اور خالص منافع ${formatMoney(context.monthNetProfit)} ہے۔`;
+  return `${context.entityName} ke mutabiq is mahine aamdani ${formatMoney(context.monthRevenue)} hai, kharch ${formatMoney(context.monthExpenses)}, tankhwa ${formatMoney(context.monthSalaries)}, aur khalis munafa ${formatMoney(context.monthNetProfit)} hai.`;
 }
