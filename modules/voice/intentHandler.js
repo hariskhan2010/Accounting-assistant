@@ -39,15 +39,20 @@ const patterns = {
     /bik[rz]y/i,
     /bech[ea]y/i
   ],
+  expenses_query: [
+    /(?:check|show|tell|kitna|kya|total|kul)\s*(?:expense|expenses|kharch|خرچ)/i,
+    /kitne\s*(?:kharch|expense|expenses)/i,
+    /kharch[ae]?\s*(?:kitne|kitna|kya)/i,
+    /(?:total|kul)\s*(?:expense|kharch)/i,
+    /expenses\s*(?:kitna|kya|total)/i,
+    /expense\s*(?:kitna|kya|total)/i
+  ],
   expense: [
     /(?:add|record|new|create|enter|daal|rakh)\s*(?:an?\s*)?expense/i,
-    /kharch[ae]?/i,
-    /خرچ/i,
-    /expense/i,
-    /\b(bill|bijli|paani|gas|rent)\b/i,
-    /(?:bill|bijli|paani|gas|rent|utility)\s*(?:add|karo|daal|rakh)/i,
+    /expense\s+(?:add|karo|daal|rakh)/i,
+    /\b(bill|bijli|paani|gas|rent)\b\s*(?:add|karo|daal|rakh)/i,
     /(?:add|daal|rakh|karo|kro)\s*(?:bill|bijli|paani|gas|rent|expense|kharch)/i,
-    /kharcha/i,
+    /kharch[ae]?\s+(?:karo|add|daal|rakh)/i,
     /srf[ra]/i
   ],
   mineral: [
@@ -119,12 +124,6 @@ const patterns = {
     /kitna\s*(?:balance|closing|baki)/i,
     /b[aa]ki\s*(?:kitna|kya)/i
   ],
-  expenses_query: [
-    /(?:check|show|tell|kitna|kya)\s*(?:expense|expenses|kharch|خرچ)/i,
-    /kitne\s*(?:kharch|expense)/i,
-    /kharch[ae]?\s*(?:kitne|kitna|kya)/i,
-    /(?:total|kul)\s*(?:expense|kharch)/i
-  ]
 };
 
 function extractAmount(text) {
