@@ -39,7 +39,7 @@ export default function VoiceScreen() {
     appendMessage({
       id: `ask-company-${Date.now()}`,
       role: "assistant",
-      text: `Kis mein ${typeLabel} add karo? **Self** ya **Company**?`,
+      text: `Kis mein ${typeLabel} add karo? Self ya Company?`,
       source: "action"
     });
   }, [appendMessage]);
@@ -74,7 +74,7 @@ export default function VoiceScreen() {
         appendMessage({
           id: `ask-again-${Date.now()}`,
           role: "assistant",
-          text: "Mujhe samajh nahi aaya. **Self** mein add karo ya **Company** mein?",
+          text: "Mujhe samajh nahi aaya. Self mein add karo ya Company mein?",
           source: "action"
         });
       }
