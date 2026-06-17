@@ -100,6 +100,7 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
   const [textMode, setTextMode] = useState(false);
   const isTextMode = useRef(false);
   const greetingSent = useRef(false);
+  const pendingInputText = useRef("");
 
   useEffect(() => {
     connectedRef.current = connected;
@@ -116,6 +117,31 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
       });
     },
     [onMessage]
+  );
+
+  const pendingInputTimer = useRef(null);
+
+  const flushPendingInput = useCallback(() => {
+    if (pendingInputText.current) {
+      onMessage?.({
+        id: makeId("gemini-live-user"),
+        role: "user",
+        text: pendingInputText.current,
+        source: "gemini-live"
+      });
+      pendingInputText.current = "";
+    }
+    pendingInputTimer.current = null;
+  }, [onMessage]);
+
+  const queueUserInput = useCallback(
+    (text) => {
+      if (!text) return;
+      pendingInputText.current = text;
+      if (pendingInputTimer.current) clearTimeout(pendingInputTimer.current);
+      pendingInputTimer.current = setTimeout(flushPendingInput, 500);
+    },
+    [flushPendingInput]
   );
 
   const stopPlayback = useCallback(() => {
@@ -150,6 +176,12 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
       socketRef.current = null;
     }
 
+    if (pendingInputTimer.current) {
+      clearTimeout(pendingInputTimer.current);
+      pendingInputTimer.current = null;
+    }
+
+    pendingInputText.current = "";
     stopPlayback();
     setConnected(false);
     setConnecting(false);
@@ -213,12 +245,18 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
 
       if (response.serverContent?.interrupted) {
         stopPlayback();
+        if (pendingInputText.current) flushPendingInput();
         setStatus("User speaking");
         return;
       }
 
       if (response.serverContent?.inputTranscription?.text) {
-        emitMessage("user", response.serverContent.inputTranscription.text);
+        queueUserInput(response.serverContent.inputTranscription.text);
+        return;
+      }
+
+      if (pendingInputText.current) {
+        flushPendingInput();
       }
 
       if (response.serverContent?.outputTranscription?.text) {
@@ -244,7 +282,7 @@ export function useGeminiLiveAgent({ companyId = "all", onMessage }) {
         setStatus("Gemini Live session ending soon");
       }
     },
-    [emitMessage, playPcmChunk, stopPlayback]
+    [emitMessage, flushPendingInput, playPcmChunk, queueUserInput, stopPlayback]
   );
 
   const start = useCallback(async () => {

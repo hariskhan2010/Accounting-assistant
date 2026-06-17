@@ -101,13 +101,6 @@ function AssistantOverlayInner({ companyId, onDismiss, onSpeakingChange }) {
         text: `✅ ${result.message}`,
         source: "action"
       });
-
-      if (liveAgentRef.current?.sendUserText) {
-        skipNextUser.current = true;
-        liveAgentRef.current.sendUserText(
-          `[System: The user's request was completed. Tell them in their language: ${result.message}]`
-        );
-      }
     });
   }, [appendMessage]);
 
@@ -153,13 +146,6 @@ function AssistantOverlayInner({ companyId, onDismiss, onSpeakingChange }) {
               text: `✅ ${result.message}`,
               source: "action"
             });
-
-            if (liveAgentRef.current?.sendUserText) {
-              skipNextUser.current = true;
-              liveAgentRef.current.sendUserText(
-                `[System: The user's request was completed. Tell them in their language: ${result.message}]`
-              );
-            }
           });
           return;
         }
