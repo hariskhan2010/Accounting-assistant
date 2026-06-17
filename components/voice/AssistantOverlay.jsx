@@ -5,7 +5,7 @@ import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutDown, useAnimatedStyle, u
 import { useGeminiLiveAgent } from "@/hooks/useGeminiLiveAgent";
 import { useVoiceChat } from "@/hooks/useVoiceChat";
 import { executeAction } from "@/modules/voice/actionExecutor";
-import { parseCommand } from "@/modules/voice/intentHandler";
+import { extractCompany, parseCommand } from "@/modules/voice/intentHandler";
 import { colors } from "@/theme";
 import { ChatBubble } from "./ChatBubble";
 import { VoiceButton } from "./VoiceButton";
@@ -67,7 +67,56 @@ export function AssistantOverlay({ visible, companyId, onDismiss, onSpeakingChan
 function AssistantOverlayInner({ companyId, onDismiss, onSpeakingChange }) {
   const { messages, appendMessage } = useVoiceChat();
   const skipNextUser = useRef(false);
+  const pendingCommand = useRef(null);
   const scrollRef = useRef(null);
+
+  const askCompany = useCallback((command) => {
+    const typeLabel = {
+      add_purchase: "purchase",
+      add_sale: "sale",
+      add_expense: "expense",
+      add_mineral: "mineral",
+      add_staff: "staff",
+      pay_salary: "salary"
+    }[command.intent] || "entry";
+
+    pendingCommand.current = command;
+
+    appendMessage({
+      id: `ask-company-${Date.now()}`,
+      role: "assistant",
+      text: `Kis mein ${typeLabel} add karo? **Self** ya **Company**?`,
+      source: "action"
+    });
+
+    if (liveAgentRef.current?.sendUserText) {
+      skipNextUser.current = true;
+      liveAgentRef.current.sendUserText(
+        `[System: Ask the user whether to add this ${typeLabel} in Self or Company account. Wait for their response.]`
+      );
+    }
+  }, [appendMessage]);
+
+  const executeWithCompany = useCallback((command, resolvedCompanyId) => {
+    pendingCommand.current = null;
+    const finalCommand = { ...command, params: { ...command.params, companyId: resolvedCompanyId } };
+
+    executeAction(finalCommand).then((result) => {
+      appendMessage({
+        id: `action-${Date.now()}`,
+        role: "assistant",
+        text: `✅ ${result.message}`,
+        source: "action"
+      });
+
+      if (liveAgentRef.current?.sendUserText) {
+        skipNextUser.current = true;
+        liveAgentRef.current.sendUserText(
+          `[System: The user's request was completed. Tell them in their language: ${result.message}]`
+        );
+      }
+    });
+  }, [appendMessage]);
 
   const handleMessage = useCallback(
     (msg) => {
@@ -77,10 +126,32 @@ function AssistantOverlayInner({ companyId, onDismiss, onSpeakingChange }) {
           return;
         }
 
+        if (pendingCommand.current) {
+          const detectedCompany = extractCompany(msg.text);
+          if (detectedCompany) {
+            appendMessage({ ...msg, source: "gemini-live" });
+            executeWithCompany(pendingCommand.current, detectedCompany);
+          } else {
+            appendMessage(msg);
+            appendMessage({
+              id: `ask-again-${Date.now()}`,
+              role: "assistant",
+              text: "Mujhe samajh nahi aaya. **Self** mein add karo ya **Company** mein?",
+              source: "action"
+            });
+          }
+          return;
+        }
+
         const command = parseCommand(msg.text);
 
         if (command.type === "action") {
           appendMessage({ ...msg, source: "gemini-live" });
+
+          if (!command.params.companyId) {
+            askCompany(command);
+            return;
+          }
 
           executeAction(command).then((result) => {
             appendMessage({
@@ -106,7 +177,7 @@ function AssistantOverlayInner({ companyId, onDismiss, onSpeakingChange }) {
 
       appendMessage(msg);
     },
-    [appendMessage]
+    [appendMessage, askCompany, executeWithCompany]
   );
 
   const liveAgentRef = useRef(null);

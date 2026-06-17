@@ -19,7 +19,12 @@ const patterns = {
     /خرید/i,
     /kharidar/i,
     /buy/i,
-    /khar[iy]d/i
+    /khar[iy]d/i,
+    /purchase\s*(?:add|karo|daal|rakh|kro)/i,
+    /(?:add|daal|rakh|karo|kro)\s*(?:kharid|kharida|purchase)/i,
+    /kharid[ae]ri/i,
+    /mol\s*(?:kharid|le)/i,
+    /khareed[iy]/i
   ],
   sale: [
     /(?:add|record|new|create|enter|daal|rakh)\s*(?:a\s*)?sale/i,
@@ -27,60 +32,98 @@ const patterns = {
     /فروخت/i,
     /farokht/i,
     /sell/i,
-    /b[ei]ch/i
+    /b[ei]ch/i,
+    /sale\s*(?:add|karo|daal|rakh|kro)/i,
+    /(?:add|daal|rakh|karo|kro)\s*(?:sale|bech|farokht)/i,
+    /bik[rz]i/i,
+    /bik[rz]y/i,
+    /bech[ea]y/i
   ],
   expense: [
     /(?:add|record|new|create|enter|daal|rakh)\s*(?:an?\s*)?expense/i,
-    /kharch[ae]/i,
+    /kharch[ae]?/i,
     /خرچ/i,
-    /expense/i
+    /expense/i,
+    /\b(bill|bijli|paani|gas|rent)\b/i,
+    /(?:bill|bijli|paani|gas|rent|utility)\s*(?:add|karo|daal|rakh)/i,
+    /(?:add|daal|rakh|karo|kro)\s*(?:bill|bijli|paani|gas|rent|expense|kharch)/i,
+    /kharcha/i,
+    /srf[ra]/i
   ],
   mineral: [
     /(?:add|record|new|create|enter|daal|rakh)\s*(?:a\s*)?mineral/i,
     /specimen/i,
-    /mineral/i
+    /mineral/i,
+    /namuna/i,
+    /pathar/i,
+    /gem/i,
+    /mineral\s*(?:add|karo|daal|rakh)/i,
+    /(?:add|daal|rakh|karo)\s*(?:mineral|namuna|pathar)/i
   ],
   staff: [
     /(?:add|record|new|create|enter|daal|rakh)\s*(?:a\s*)?staff/i,
     /mulazim/i,
     /employee/i,
     /worker/i,
-    /staff/i
+    /staff/i,
+    /staff\s*(?:add|karo|daal|rakh)/i,
+    /(?:add|daal|rakh|karo|kro)\s*(?:staff|mulazim|employee|worker|karmchari|aadmi)/i,
+    /karm[cz]h[ae]ri/i,
+    /mulazmeen/i
   ],
   salary: [
     /(?:pay|give|send|do|karo)\s*(?:salary|tan[ck]hwa)/i,
     /تنخواہ/i,
-    /salary\s*(?:pay|de|do)/i,
-    /tan[ck]hwa[hi]?/i
+    /salary\s*(?:pay|de|do|karo)/i,
+    /tan[ck]hw[ah][hi]?/i,
+    /salary\s*(?:add|karo|daal|rakh)/i,
+    /(?:add|daal|rakh|karo|pay|de|do)\s*(?:salary|tankhwa)/i,
+    /tan[ck]hwa[hi]?\s*(?:add|karo|daal|pay)/i
   ],
   stock: [
     /(?:check|show|tell|see|kitna|kya)\s*(?:stock|stock|اسٹاک)/i,
     /stock\s*(?:check|balance|kitna|bata)/i,
     /کتنا\s*(?:سٹاک|اسٹاک|stock)/i,
-    /b[aa]qi\s*(?:stock|maal)/i
+    /b[aa]qi\s*(?:stock|maal|samaan)/i,
+    /stock\s*(?:kya|kitna|batao|dikhao)/i,
+    /کتنا\s*(?:مال|سامان)/i,
+    /inventory/i,
+    /(?:kitna|kya|check|bata)\s*(?:maal|samaan|stock)/i
   ],
   revenue: [
     /(?:check|show|tell|kitna|kya)\s*(?:revenue|income|aamdani|آمدنی)/i,
     /آمدنی/i,
     /aamdani/i,
     /sales?\s*(?:kitna|kya)/i,
-    /revenue/i
+    /revenue/i,
+    /kam[ae]i/i,
+    /income/i,
+    /aamd[ae]ni/i,
+    /kitni\s*(?:aamdani|income|revenue|kamai)/i
   ],
   profit: [
     /(?:check|show|tell|kitna|kya)\s*(?:profit|munafa|nafa|منافع)/i,
     /منافع/i,
     /munaf[ae]/i,
-    /profit/i
+    /profit/i,
+    /naf[ae]/i,
+    /f[ae]ida/i,
+    /kitna\s*(?:munafa|nafa|profit)/i
   ],
   balance: [
     /(?:check|show|tell|kitna|kya)\s*(?:balance|closing|بیلنس)/i,
     /بیلنس/i,
     /balance/i,
-    /closing/i
+    /closing/i,
+    /b[ae]l[ae]ns/i,
+    /kitna\s*(?:balance|closing|baki)/i,
+    /b[aa]ki\s*(?:kitna|kya)/i
   ],
   expenses_query: [
     /(?:check|show|tell|kitna|kya)\s*(?:expense|expenses|kharch|خرچ)/i,
-    /kitne\s*(?:kharch|expense)/i
+    /kitne\s*(?:kharch|expense)/i,
+    /kharch[ae]?\s*(?:kitne|kitna|kya)/i,
+    /(?:total|kul)\s*(?:expense|kharch)/i
   ]
 };
 
@@ -119,8 +162,10 @@ function extractAmount(text) {
 
 function extractCompany(text) {
   const textLower = text.toLowerCase();
-  if (/(?:company|company\s*a|company_a|first\s*company|business)/i.test(textLower)) return "company-a";
-  if (/\b(self|apna|personal|my|khud)\b/i.test(textLower)) return "self";
+  if (/(?:company|company\s*a|company_a|first\s*company|business|compani)/i.test(textLower)) return "company-a";
+  if (/\b(self|apna|personal|my|khud|apnay|mere|meri)\b/i.test(textLower)) return "self";
+  if (/\bself\s*(?:mein|mai|main)\b/i.test(textLower)) return "self";
+  if (/\bcompany\s*(?:mein|mai|main)\b/i.test(textLower)) return "company-a";
   return null;
 }
 
@@ -134,21 +179,27 @@ function extractItem(text) {
   const fallback = text.match(/(?:purchase|bought|sold|buy|sell)\s+(?:a\s+|an\s+|the\s+)?["']?([A-Za-z\u0600-\u06FF\s]{2,30})["']?/i);
   if (fallback) return fallback[1].trim();
 
+  const kaMatch = text.match(/([\u0600-\u06FF\w]{2,30})\s+ka\s+(?:bill|purchase|sale|add|karo|daal)/i);
+  if (kaMatch) return kaMatch[1].trim();
+
+  const billMatch = text.match(/([\u0600-\u06FF\w]{2,30})\s+(?:ka|ki)\s+bill/i);
+  if (billMatch) return billMatch[1].trim() + " bill";
+
   return null;
 }
 
 function extractExpenseType(text) {
   const textLower = text.toLowerCase();
-  if (/\bcut(?:ting)?\b/.test(textLower)) return "cutting";
+  if (/\bcut(?:ting)?\b|\bkata[ei]\b/i.test(textLower)) return "cutting";
   if (/\bpolish(?:ing)?\b/.test(textLower)) return "polishing";
   if (/\blab\b|\btest(?:ing)?\b|\bcertificate\b/.test(textLower)) return "lab_testing";
   if (/\bshipping\b|\bfreight\b|\b(out|in)going\b|\bbhej[ai]/.test(textLower)) {
     if (/\bin(?:coming|ward)?\s*(?:shipping|freight)/.test(textLower)) return "shipping_in";
     return "shipping_out";
   }
-  if (/\brent\b|\bkera[yi]\b/.test(textLower)) return "rent";
-  if (/\butility|\bbijli\b|\bpaani\b|\bgas\b|\bbill\b/.test(textLower)) return "utility";
-  if (/\bdaily\b|\bmisc\b|\bother\b|\bgeneral\b/.test(textLower)) return "daily";
+  if (/\brent\b|\bkera[yi]\b|\bkir[ae]y[ae]\b/.test(textLower)) return "rent";
+  if (/\butility|\bbijli\b|\bpaani\b|\bgas\b|\bbill\b|\blight\b|\bbijli ka bill/i.test(textLower)) return "utility";
+  if (/\bdaily\b|\bmisc\b|\bother\b|\bgeneral\b|\brozana\b/.test(textLower)) return "daily";
   return null;
 }
 
@@ -246,15 +297,17 @@ export function parseCommand(text) {
   };
 
   if (rawIntent === "purchase") {
+    params.description = params.item || text.replace(/add|record|enter|daal|rakh|karo|purchase|kharid|خرید|buy/i, "").trim();
     return { type: "action", intent: "add_purchase", params };
   }
   if (rawIntent === "sale") {
     params.buyer = extractBuyer(text);
+    params.description = params.item || text.replace(/add|record|enter|daal|rakh|karo|sale|bech|فروخت|sell/i, "").trim();
     return { type: "action", intent: "add_sale", params };
   }
   if (rawIntent === "expense") {
     params.expenseType = extractExpenseType(text);
-    params.description = params.item || text.replace(/add|record|enter|daal|rakh|expense|kharcha|خرچ/i, "").trim();
+    params.description = params.item || text.replace(/add|record|enter|daal|rakh|karo|expense|kharcha|خرچ/i, "").trim();
     return { type: "action", intent: "add_expense", params };
   }
   if (rawIntent === "mineral") {
@@ -281,4 +334,4 @@ export function parseCommand(text) {
   return { type: "query", raw: text };
 }
 
-export { INTENTS };
+export { INTENTS, extractCompany };

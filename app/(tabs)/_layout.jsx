@@ -10,7 +10,6 @@ const icons = {
   stock: "cube",
   sales: "receipt",
   expenses: "wallet",
-  minerals: "diamond",
   staff: "people",
   reports: "bar-chart",
   voice: "chatbubbles"
