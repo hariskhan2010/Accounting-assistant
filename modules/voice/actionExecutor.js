@@ -1,6 +1,12 @@
-import { createLocalExpense, createLocalMineral, createLocalPurchase, createLocalSale, createLocalSalary, createLocalStaff, loadAccountingState } from "@/modules/accounting/localAccountingStore";
+import { loadAccountingState } from "@/modules/accounting/localAccountingStore";
 import { calculateStockBalances, calculateSummary, formatMoney } from "@/modules/accounting/localAccountingStore";
 import { getCompanyName, getExpenseTypeLabel } from "@/modules/accounting/constants";
+import { createPurchase } from "@/modules/accounting/purchaseService";
+import { createSale } from "@/modules/accounting/saleService";
+import { createExpense } from "@/modules/expenses/expenseService";
+import { createMineral } from "@/modules/minerals/mineralService";
+import { createStaff } from "@/modules/staff/staffService";
+import { createSalary } from "@/modules/staff/salaryService";
 
 function entitySummary(entity) {
   return entity ? ` (${getCompanyName(entity)})` : "";
@@ -79,7 +85,7 @@ export async function executeAction(command) {
   try {
     switch (intent) {
       case "add_purchase": {
-        await createLocalPurchase({
+        const result = await createPurchase({
           companyId: params.companyId || "self",
           date: params.date,
           item: params.item || "Item",
@@ -89,10 +95,11 @@ export async function executeAction(command) {
           unitPrice: params.amount / (params.quantity || 1),
           notes: `Via voice: ${params.raw}`
         });
+        if (result.error) throw new Error(result.error.message || result.error);
         break;
       }
       case "add_sale": {
-        await createLocalSale({
+        const result = await createSale({
           companyId: params.companyId || "self",
           date: params.date,
           item: params.item || "Item",
@@ -103,20 +110,22 @@ export async function executeAction(command) {
           buyer: params.buyer || "Cash Sale",
           allowNegativeStock: true
         });
+        if (result.error) throw new Error(result.error.message || result.error);
         break;
       }
       case "add_expense": {
-        await createLocalExpense({
+        const result = await createExpense({
           companyId: params.companyId || "self",
           date: params.date,
           type: params.expenseType || "daily",
           amount: params.amount || 0,
           description: params.description || "Via voice assistant"
         });
+        if (result.error) throw new Error(result.error.message || result.error);
         break;
       }
       case "add_mineral": {
-        await createLocalMineral({
+        const result = await createMineral({
           companyId: params.companyId || "self",
           date: params.date,
           name: params.item || "Specimen",
@@ -124,16 +133,18 @@ export async function executeAction(command) {
           salePrice: "",
           status: "in_stock"
         });
+        if (result.error) throw new Error(result.error.message || result.error);
         break;
       }
       case "add_staff": {
-        await createLocalStaff({
+        const result = await createStaff({
           companyId: params.companyId || "self",
           name: params.staffName || "Staff",
           designation: params.designation || "Worker",
           monthlySalary: params.amount || 0,
           joinDate: params.date
         });
+        if (result.error) throw new Error(result.error.message || result.error);
         break;
       }
       case "pay_salary": {
@@ -149,7 +160,7 @@ export async function executeAction(command) {
             params
           };
         }
-        await createLocalSalary({
+        const result = await createSalary({
           companyId: params.companyId || staffMatch.companyId || "self",
           staffId: staffMatch.id,
           month: params.month || new Date().getMonth() + 1,
@@ -157,6 +168,7 @@ export async function executeAction(command) {
           amountPaid: params.amount || staffMatch.monthlySalary,
           status: "paid"
         });
+        if (result.error) throw new Error(result.error.message || result.error);
         break;
       }
       default:
