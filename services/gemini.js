@@ -42,7 +42,11 @@ export async function askGeminiInUrdu({ transcript, context }) {
       const answer = await callBigPickle(prompt);
       if (answer) return { answer, source: "big-pickle", error: null };
     } catch (err) {
-      console.warn("Big Pickle API error:", err?.message || err);
+      return {
+        answer: `[API Error: ${err?.message}] ${answerLocallyInUrdu(transcript, context)}`,
+        source: "local",
+        error: err?.message
+      };
     }
   }
 
