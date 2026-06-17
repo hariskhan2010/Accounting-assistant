@@ -55,6 +55,7 @@ export default function VoiceScreen() {
         text: result.success ? `✅ ${result.message}` : `❌ ${result.message}`,
         source: "action"
       });
+      setThinking(false);
     });
   }, [appendMessage]);
 
@@ -96,6 +97,7 @@ export default function VoiceScreen() {
         text: result.success ? `✅ ${result.message}` : `❌ ${result.message}`,
         source: "action"
       });
+      setThinking(false);
       return;
     }
 
