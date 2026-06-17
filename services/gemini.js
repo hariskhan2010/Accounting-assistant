@@ -27,7 +27,11 @@ async function callBigPickle(prompt) {
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error?.message || `Big Pickle request failed (${response.status})`);
-  return data?.choices?.[0]?.message?.content || "";
+  return sanitizeAnswer(data?.choices?.[0]?.message?.content || "");
+}
+
+function sanitizeAnswer(text) {
+  return text.replace(/^[.،؟?‏\s]+/, "").replace(/[.،؟?‏\s]+$/, "").trim();
 }
 
 export async function askGeminiInUrdu({ transcript, context }) {
