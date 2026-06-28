@@ -35,7 +35,7 @@ export default function SettingsScreen() {
   }
 
   function openEtsyDev() {
-    Linking.openURL("https://developers.etsy.com");
+    Linking.openURL("https://www.etsy.com/developers/your-apps");
   }
 
   return (
@@ -94,11 +94,11 @@ export default function SettingsScreen() {
           </View>
 
           <Text style={styles.stepText}>
-            1. Go to developers.etsy.com and create an app{'\n'}
-            2. Get API Key + API Secret{'\n'}
-            3. Set webhook URL below in your Etsy app settings
+            1. Go to etsy.com/developers/your-apps and sign in{'\n'}
+            2. Click "Create a New App" → get API Key + Secret{'\n'}
+            3. Set webhook URL below in your app settings
           </Text>
-          <GoldButton title="Open Etsy Developer" variant="secondary" onPress={openEtsyDev} style={styles.devBtn} />
+          <GoldButton title="Open Etsy Developer (Your Apps)" variant="secondary" onPress={openEtsyDev} style={styles.devBtn} />
 
           <Text style={styles.inputLabel}>Webhook URL</Text>
           <LuxuryTextInput
