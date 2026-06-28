@@ -23,6 +23,7 @@ export default function RootLayout() {
         <Stack.Screen name="dashboard-breakdown/[metric]" options={{ title: "Entity Breakdown" }} />
         <Stack.Screen name="purchase/[id]" options={{ title: "Purchase Detail" }} />
         <Stack.Screen name="sale/[id]" options={{ title: "Sale Detail" }} />
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
       </Stack>
     </Animated.View>
   );

@@ -1,6 +1,6 @@
 export const COMPANIES = [
   { id: "company-a", name: "Company", type: "company" },
-  { id: "self", name: "Self", type: "self" }
+  { id: "self", name: "Investor", type: "self" }
 ];
 
 export const COMPANY_FILTERS = [{ id: "all", name: "All Entities", type: "all" }, ...COMPANIES];
@@ -55,4 +55,54 @@ export function getMineralStatusLabel(status) {
 
 export function getSalaryStatusLabel(status) {
   return SALARY_STATUSES.find((salaryStatus) => salaryStatus.key === status)?.label || status;
+}
+
+export const PLATFORMS = [
+  { key: "ebay", label: "eBay", color: "#E53238" },
+  { key: "etsy", label: "Etsy", color: "#F1641E" }
+];
+
+export const ORDER_STATUSES = [
+  { key: "pending", label: "Pending" },
+  { key: "shipped", label: "Shipped" },
+  { key: "delivered", label: "Delivered" },
+  { key: "cancelled", label: "Cancelled" }
+];
+
+export const STOCK_ITEM_STATUSES = [
+  { key: "available", label: "Available" },
+  { key: "sold", label: "Sold" }
+];
+
+export const STOCK_TYPES = [
+  { key: "investor", label: "Investor" },
+  { key: "company", label: "Company" }
+];
+
+export function getPlatformLabel(platform) {
+  return PLATFORMS.find((p) => p.key === platform)?.label || platform;
+}
+
+export function getOrderStatusLabel(status) {
+  return ORDER_STATUSES.find((s) => s.key === status)?.label || status;
+}
+
+export function getStockItemStatusLabel(status) {
+  return STOCK_ITEM_STATUSES.find((s) => s.key === status)?.label || status;
+}
+
+export function getStockTypeLabel(type) {
+  return STOCK_TYPES.find((t) => t.key === type)?.label || type;
+}
+
+export function generateStockId(stockType) {
+  const prefix = stockType === "investor" ? "INV" : "CS";
+  const num = String(Date.now()).slice(-5);
+  return `${prefix}-${num}`;
+}
+
+export function generatePaymentId(stockType) {
+  const prefix = stockType === "investor" ? "INVP" : "CP";
+  const num = String(Date.now()).slice(-5);
+  return `${prefix}-${num}`;
 }

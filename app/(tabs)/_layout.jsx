@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -7,10 +7,13 @@ import { colors } from "@/theme";
 const icons = {
   index: "grid",
   purchases: "bag-add",
+  orders: "briefcase",
+  barcodes: "barcode",
   stock: "cube",
   sales: "receipt",
   expenses: "wallet",
   staff: "people",
+  minerals: "gem",
   reports: "bar-chart",
   voice: "chatbubbles"
 };
@@ -43,15 +46,21 @@ export default function TabsLayout() {
         tabBarIcon: ({ color, size, focused }) => (
           <Animated.View entering={FadeIn.duration(200)}>
             <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-              <Ionicons color={color} name={icons[route.name] || "ellipse"} size={focused ? size + (compact ? 1 : 2) : size} />
+              {route.name === "minerals" ? (
+                <MaterialCommunityIcons color={color} name="diamond-stone" size={focused ? size + (compact ? 1 : 2) : size} />
+              ) : (
+                <Ionicons color={color} name={icons[route.name] || "ellipse"} size={focused ? size + (compact ? 1 : 2) : size} />
+              )}
             </View>
           </Animated.View>
         )
       })}
     >
       <Tabs.Screen name="index" options={{ title: "Dashboard" }} />
+      <Tabs.Screen name="orders" options={{ title: "Orders" }} />
+      <Tabs.Screen name="barcodes" options={{ title: "Barcodes" }} />
       <Tabs.Screen name="stock" options={{ title: "Stock" }} />
-      <Tabs.Screen name="sales" options={{ title: "Sales" }} />
+      <Tabs.Screen name="sales" options={{ title: "Sales" }}/>
       <Tabs.Screen name="expenses" options={{ title: "Expenses" }} />
       <Tabs.Screen name="reports" options={{ title: "Reports" }} />
       <Tabs.Screen name="voice" options={{ title: "AI Assistant" }} />

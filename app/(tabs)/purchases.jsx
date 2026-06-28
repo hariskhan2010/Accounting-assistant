@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { AnimatedCard } from "@/components/animated/AnimatedCard";
 import { AnimatedGoldButton } from "@/components/animated/AnimatedGoldButton";
 import { FadeInView } from "@/components/animated/FadeInView";
@@ -8,7 +9,7 @@ import { LuxuryTextInput } from "@/components/ui/LuxuryTextInput";
 import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { COMPANY_FILTERS, COMPANIES, STOCK_CATEGORIES, UNITS, getCompanyName, getStockCategoryLabel } from "@/modules/accounting/constants";
-import { createPurchase, listPurchases } from "@/modules/accounting/purchaseService";
+import { createPurchase, deletePurchase, listPurchases } from "@/modules/accounting/purchaseService";
 import { formatMoney } from "@/modules/accounting/localAccountingStore";
 import { colors } from "@/theme";
 
@@ -71,6 +72,24 @@ export default function PurchasesScreen() {
     refresh();
   };
 
+  function handleDelete(purchase) {
+    Alert.alert(
+      "Delete Purchase",
+      `Remove ${purchase.item} (${purchase.quantity} ${purchase.unit}) permanently?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await deletePurchase(purchase.id);
+            refresh();
+          }
+        }
+      ]
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} style={styles.screen}>
       <LuxuryScreenHeader colorIndex={1} title="Purchases" subtitle="Raw gemstone buying with stock-in tracking" />
@@ -92,7 +111,7 @@ export default function PurchasesScreen() {
         <SegmentedControl options={COMPANY_FILTERS} value={companyFilter} onChange={setCompanyFilter} />
       </FadeInView>
       <FadeInView delay={300}>
-        <DataTable columns={columns} rows={rows} emptyLabel="No purchases yet" />
+        <DataTable columns={columns} rows={rows} emptyLabel="No purchases yet" onRowPress={handleDelete} />
       </FadeInView>
     </ScrollView>
   );

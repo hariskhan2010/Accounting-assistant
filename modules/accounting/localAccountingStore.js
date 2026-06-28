@@ -79,6 +79,14 @@ async function saveAccountingState(state) {
   return normalized;
 }
 
+export async function deleteLocalPurchase(purchaseId) {
+  const state = await loadAccountingState();
+  state.purchases = state.purchases.filter((p) => p.id !== purchaseId);
+  state.stockEntries = state.stockEntries.filter((e) => e.referenceId !== purchaseId);
+  await saveAccountingState(state);
+  return true;
+}
+
 export async function createLocalPurchase(payload) {
   const state = await loadAccountingState();
   const quantity = toNumber(payload.quantity);
@@ -186,6 +194,14 @@ export async function createLocalExpense(payload) {
     ...state,
     expenses: [expense, ...state.expenses]
   });
+}
+
+export async function deleteLocalMineral(mineralId) {
+  const state = await loadAccountingState();
+  state.minerals = state.minerals.filter((m) => m.id !== mineralId);
+  state.stockEntries = state.stockEntries.filter((e) => e.referenceId !== mineralId);
+  await saveAccountingState(state);
+  return true;
 }
 
 export async function createLocalMineral(payload) {

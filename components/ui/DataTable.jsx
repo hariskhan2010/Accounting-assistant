@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -25,7 +25,7 @@ function AnimatedRow({ children, index }) {
   return <Animated.View style={[styles.row, index % 2 === 1 && styles.rowAlt, style]}>{children}</Animated.View>;
 }
 
-export function DataTable({ columns, rows, emptyLabel = "No records yet" }) {
+export function DataTable({ columns, rows, emptyLabel = "No records yet", onRowPress }) {
   const { width } = useWindowDimensions();
   const compact = width < 390;
   const availableWidth = Math.max(280, width - (compact ? 24 : 32));
@@ -47,13 +47,15 @@ export function DataTable({ columns, rows, emptyLabel = "No records yet" }) {
           </View>
         ) : (
           rows.map((row, index) => (
-            <AnimatedRow key={row.id} index={index}>
-              {columns.map((column) => (
-                <Text key={column.key} numberOfLines={2} style={[styles.cell, compact && styles.cellCompact, column.width && { width: compact ? Math.max(112, column.width * 0.78) : column.width }]}>
-                  {row[column.key]}
-                </Text>
-              ))}
-            </AnimatedRow>
+            <Pressable key={row.id || index} onPress={onRowPress ? () => onRowPress(row) : undefined}>
+              <AnimatedRow index={index}>
+                {columns.map((column) => (
+                  <Text key={column.key} numberOfLines={2} style={[styles.cell, compact && styles.cellCompact, column.width && { width: compact ? Math.max(112, column.width * 0.78) : column.width }]}>
+                    {row[column.key]}
+                  </Text>
+                ))}
+              </AnimatedRow>
+            </Pressable>
           ))
         )}
       </View>
