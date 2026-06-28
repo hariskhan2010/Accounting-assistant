@@ -8,11 +8,19 @@ import { GoldButton } from "@/components/ui/GoldButton";
 import { LuxuryTextInput } from "@/components/ui/LuxuryTextInput";
 import { colors } from "@/theme";
 
+const SUPABASE_PROJECT = "hyjfqsxavrykjzmaaasd";
+
 export default function SettingsScreen() {
   const [ebayClientId, setEbayClientId] = useState("");
   const [ebayClientSecret, setEbayClientSecret] = useState("");
+  const [ebayWebhook, setEbayWebhook] = useState(
+    `https://${SUPABASE_PROJECT}.supabase.co/functions/v1/ebay-webhook`
+  );
   const [etsyApiKey, setEtsyApiKey] = useState("");
   const [etsyApiSecret, setEtsyApiSecret] = useState("");
+  const [etsyWebhook, setEtsyWebhook] = useState(
+    `https://${SUPABASE_PROJECT}.supabase.co/functions/v1/etsy-webhook`
+  );
 
   function handleSaveEbay() {
     Alert.alert("eBay Credentials", "Credentials saved locally. Webhook will process incoming orders.");
@@ -48,9 +56,18 @@ export default function SettingsScreen() {
           <Text style={styles.stepText}>
             1. Go to developer.ebay.com and create an app{'\n'}
             2. Get Client ID + Client Secret{'\n'}
-            3. Set webhook URL to your Edge Function URL
+            3. Set webhook URL below in your eBay app settings
           </Text>
           <GoldButton title="Open eBay Developer" variant="secondary" onPress={openEbayDev} style={styles.devBtn} />
+
+          <Text style={styles.inputLabel}>Webhook URL</Text>
+          <LuxuryTextInput
+            placeholder="https://project.supabase.co/functions/v1/ebay-webhook"
+            value={ebayWebhook}
+            onChangeText={setEbayWebhook}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
 
           <Text style={styles.inputLabel}>Client ID</Text>
           <LuxuryTextInput
@@ -79,9 +96,18 @@ export default function SettingsScreen() {
           <Text style={styles.stepText}>
             1. Go to developers.etsy.com and create an app{'\n'}
             2. Get API Key + API Secret{'\n'}
-            3. Set webhook URL to your Edge Function URL
+            3. Set webhook URL below in your Etsy app settings
           </Text>
           <GoldButton title="Open Etsy Developer" variant="secondary" onPress={openEtsyDev} style={styles.devBtn} />
+
+          <Text style={styles.inputLabel}>Webhook URL</Text>
+          <LuxuryTextInput
+            placeholder="https://project.supabase.co/functions/v1/etsy-webhook"
+            value={etsyWebhook}
+            onChangeText={setEtsyWebhook}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
 
           <Text style={styles.inputLabel}>API Key</Text>
           <LuxuryTextInput
