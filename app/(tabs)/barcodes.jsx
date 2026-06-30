@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     gap: 4
   },
   screen: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundDeep,
     flex: 1
   },
   sold: {

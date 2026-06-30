@@ -118,19 +118,19 @@ export default function PurchasesScreen() {
 }
 
 const styles = StyleSheet.create({
-  cardTitle: { color: colors.primary, fontSize: 16, fontWeight: "700", letterSpacing: 0.3 },
+  cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" },
   content: { gap: 16, padding: 16 },
   flex: { flex: 1 },
   input: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 8,
-    borderWidth: 1,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
     color: colors.text,
     minHeight: 44,
     paddingHorizontal: 12
   },
   row: { gap: 10 },
-  screen: { backgroundColor: colors.background, flex: 1 },
+  screen: { backgroundColor: colors.backgroundDeep, flex: 1 },
   title: { color: colors.text, fontSize: 26, fontWeight: "700" }
 });

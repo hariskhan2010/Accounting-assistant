@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40
   },
   screen: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundDeep,
     flex: 1
   },
   countRow: {

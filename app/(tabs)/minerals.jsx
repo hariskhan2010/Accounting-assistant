@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between"
   },
-  cardTitle: { color: colors.primary, fontSize: 16, fontWeight: "700", letterSpacing: 0.3 },
+  cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" },
   content: { gap: 16, padding: 16 },
   delBtn: {
     alignSelf: "flex-end",
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 13
   },
-  screen: { backgroundColor: colors.background, flex: 1 },
+  screen: { backgroundColor: colors.backgroundDeep, flex: 1 },
   title: { color: colors.text, fontSize: 26, fontWeight: "700" },
   value: {
     color: colors.text,

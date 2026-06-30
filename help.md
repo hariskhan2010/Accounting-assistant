@@ -176,7 +176,7 @@ ETSY_API_SECRET
 | Step 2: Deploy Edge Functions | 2 min | ☐ |
 | Step 3: App Test | 10 min | ☐ |
 | Step 4: eBay Setup | 20 min | ☐ |
-| Step 5: Etsy Setup | 20 min | ☐ |
+| Step 5: Etsy Setup | 20 min | ⏳ (app registered, pending approval) |
 | Step 6: Live Test | 15 min | ☐ |
 | Step 7: Production Deploy | 10 min | ☐ |
 

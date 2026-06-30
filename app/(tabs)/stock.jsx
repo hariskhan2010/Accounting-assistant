@@ -116,14 +116,14 @@ const styles = StyleSheet.create({
   },
   barcodeRow: {
     alignItems: "center",
-    backgroundColor: colors.background,
-    borderRadius: 10,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 12,
     flexDirection: "row",
     gap: 10,
     marginBottom: 8,
     padding: 10
   },
-  cardTitle: { color: colors.primary, fontSize: 15, fontWeight: "700", letterSpacing: 0.5, marginBottom: 12 },
+  cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, marginBottom: 12, textTransform: "uppercase" },
   content: { gap: 16, padding: 16 },
   delBtn: {
     padding: 6
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   newEntryBtn: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: 16,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700"
   },
-  screen: { backgroundColor: colors.background, flex: 1 },
+  screen: { backgroundColor: colors.backgroundDeep, flex: 1 },
   sold: {
     color: colors.danger
   },

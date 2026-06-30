@@ -51,15 +51,17 @@ Test karo:
   ```
 - App Settings mein credentials daalo
 
-### 5. Etsy Developer Account
+### 5. Etsy Developer Account ✅ (Pending Approval)
 
-- https://developers.etsy.com pe jao
-- App banao → API Key + Secret lo
-- Webhook URL set karo:
+- ✅ App registered on Etsy
+- ✅ API Key: `0w8n936ttk8j1f18p4vu5b2n`
+- ✅ Secret: `09pdw1imrj`
+- ⏳ **Waiting for Personal Approval** (tomorrow check)
+- ⏳ Webhook URL set karna hai approval ke baad:
   ```
   https://hyjfqsxavrykjzmaaasd.supabase.co/functions/v1/etsy-webhook
   ```
-- App Settings mein credentials daalo
+- ⏳ App Settings mein credentials paste karna hai
 
 ### 6. Full Flow Test
 

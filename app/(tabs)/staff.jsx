@@ -169,8 +169,8 @@ export default function StaffScreen() {
 }
 
 const styles = StyleSheet.create({
-  cardTitle: { color: colors.primary, fontSize: 16, fontWeight: "700", letterSpacing: 0.3 },
+  cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" },
   content: { gap: 16, padding: 16 },
-  screen: { backgroundColor: colors.background, flex: 1 },
+  screen: { backgroundColor: colors.backgroundDeep, flex: 1 },
   title: { color: colors.text, fontSize: 26, fontWeight: "700" }
 });

@@ -1,6 +1,7 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { colors } from "@/theme";
 
@@ -30,9 +31,9 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.borderLight,
-          borderTopWidth: 1,
+          backgroundColor: colors.tabBar,
+          borderTopColor: colors.tabBarBorder,
+          borderTopWidth: StyleSheet.hairlineWidth,
           elevation: 0,
           height: compact ? 56 : 64,
           paddingBottom: compact ? 6 : 8,
@@ -41,7 +42,8 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: "700",
-          letterSpacing: 0.3
+          letterSpacing: 0.3,
+          fontFamily: "Montserrat"
         },
         tabBarIcon: ({ color, size, focused }) => (
           <Animated.View entering={FadeIn.duration(200)}>

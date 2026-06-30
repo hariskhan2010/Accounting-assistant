@@ -124,10 +124,10 @@ export default function ReportsScreen() {
 }
 
 const styles = StyleSheet.create({
-  cardTitle: { color: colors.primary, fontSize: 16, fontWeight: "700", letterSpacing: 0.3, marginBottom: 8 },
+  cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 8 },
   content: { gap: 16, padding: 16 },
   actions: { gap: 10 },
-  screen: { backgroundColor: colors.background, flex: 1 },
+  screen: { backgroundColor: colors.backgroundDeep, flex: 1 },
   text: { color: colors.textMuted, lineHeight: 21 },
   title: { color: colors.text, fontSize: 26, fontWeight: "700" }
 });
