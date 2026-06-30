@@ -4,7 +4,9 @@ import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withRepeat,
+  withSequence,
   withTiming,
   Easing
 } from "react-native-reanimated";
@@ -24,22 +26,52 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 function AmbientBlob({ size, x, y, color, delay = 0 }) {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const opacity = useSharedValue(0.08);
+  const scale = useSharedValue(1);
 
   useEffect(() => {
+    const dur = 4000 + Math.random() * 2000;
     translateX.value = withRepeat(
-      withTiming(30, { duration: 4000, easing: Easing.inOut(Easing.sin) }),
+      withTiming(40 + Math.random() * 30, { duration: dur, easing: Easing.inOut(Easing.sin) }),
       -1,
       true
     );
     translateY.value = withRepeat(
-      withTiming(-20, { duration: 5000, easing: Easing.inOut(Easing.sin) }),
+      withTiming(-30 - Math.random() * 20, { duration: dur + 1000, easing: Easing.inOut(Easing.sin) }),
       -1,
       true
+    );
+    opacity.value = withDelay(
+      delay,
+      withRepeat(
+        withSequence(
+          withTiming(0.35, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
+          withTiming(0.08, { duration: 3000, easing: Easing.inOut(Easing.sin) })
+        ),
+        -1,
+        true
+      )
+    );
+    scale.value = withDelay(
+      delay,
+      withRepeat(
+        withSequence(
+          withTiming(1.3, { duration: 4000, easing: Easing.inOut(Easing.sin) }),
+          withTiming(1, { duration: 4000, easing: Easing.inOut(Easing.sin) })
+        ),
+        -1,
+        true
+      )
     );
   }, []);
 
   const animStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }, { translateY: translateY.value }]
+    opacity: opacity.value,
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value }
+    ]
   }));
 
   return (
@@ -51,13 +83,80 @@ function AmbientBlob({ size, x, y, color, delay = 0 }) {
           height: size,
           borderRadius: size / 2,
           backgroundColor: color,
-          opacity: 0.1,
           left: x,
           top: y
         },
         animStyle
       ]}
     />
+  );
+}
+
+function CrestGlow() {
+  const opacity = useSharedValue(0.15);
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.4, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(0.15, { duration: 2000, easing: Easing.inOut(Easing.sin) })
+      ),
+      -1,
+      true
+    );
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(1.25, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.sin) })
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }]
+  }));
+
+  return (
+    <Animated.View
+      style={[
+        {
+          position: "absolute",
+          width: 80,
+          height: 80,
+          borderRadius: 40,
+          backgroundColor: colors.glowGold,
+          top: -12,
+          left: -12
+        },
+        glowStyle
+      ]}
+    />
+  );
+}
+
+function ShimmerBar() {
+  const translateX = useSharedValue(-200);
+
+  useEffect(() => {
+    translateX.value = withRepeat(
+      withTiming(400, { duration: 2500, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true
+    );
+  }, []);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }]
+  }));
+
+  return (
+    <View style={styles.shimmerTrack}>
+      <Animated.View style={[styles.shimmer, animStyle]} />
+    </View>
   );
 }
 
@@ -99,10 +198,14 @@ export default function DashboardScreen() {
               <Text style={styles.eyebrow}>Company + Self</Text>
               <Text style={styles.title}>Financial Dashboard</Text>
             </View>
-            <View style={styles.crestCircle}>
-              <Text style={styles.crestIcon}>◆</Text>
+            <View style={styles.crestWrap}>
+              <CrestGlow />
+              <View style={styles.crestCircle}>
+                <Text style={styles.crestIcon}>◆</Text>
+              </View>
             </View>
           </View>
+          <ShimmerBar />
         </FadeInView>
 
         <FadeInView delay={300}>
@@ -165,12 +268,32 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     height: 56,
     justifyContent: "center",
-    width: 56
+    position: "relative",
+    width: 56,
+    zIndex: 2
   },
   crestIcon: {
     color: colors.primary,
     fontSize: 24,
     opacity: 0.7
+  },
+  crestWrap: {
+    height: 56,
+    position: "relative",
+    width: 56
+  },
+  shimmer: {
+    backgroundColor: colors.primary,
+    height: "100%",
+    opacity: 0.4,
+    width: 60
+  },
+  shimmerTrack: {
+    borderRadius: 2,
+    height: 2,
+    marginTop: 12,
+    overflow: "hidden",
+    width: "100%"
   },
   eyebrow: {
     color: colors.textMuted,
