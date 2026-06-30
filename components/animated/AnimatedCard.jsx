@@ -1,30 +1,25 @@
 import { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withSpring,
-  withTiming,
-  withRepeat
+  withTiming
 } from "react-native-reanimated";
 import { colors } from "@/theme";
 
-export function AnimatedCard({ children, delay = 0, style }) {
+const SPRING_CONFIG = { damping: 20, stiffness: 90 };
+
+export function AnimatedCard({ children, delay = 0, variant = "default", style }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
   const scale = useSharedValue(0.93);
-  const glowOpacity = useSharedValue(0);
 
   useEffect(() => {
-    opacity.value = withDelay(delay, withSpring(1, { damping: 15, stiffness: 90 }));
-    translateY.value = withDelay(delay, withSpring(0, { damping: 15, stiffness: 90 }));
-    scale.value = withDelay(delay, withSpring(1, { damping: 15, stiffness: 90 }));
-    glowOpacity.value = withDelay(delay + 300, withRepeat(
-      withTiming(1, { duration: 1500 }),
-      -1,
-      true
-    ));
+    opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
+    translateY.value = withDelay(delay, withSpring(0, SPRING_CONFIG));
+    scale.value = withDelay(delay, withSpring(1, SPRING_CONFIG));
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -32,14 +27,16 @@ export function AnimatedCard({ children, delay = 0, style }) {
     transform: [{ translateY: translateY.value }, { scale: scale.value }]
   }));
 
-  const glowStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value * 0.25,
-    borderColor: colors.primary
-  }));
-
   return (
-    <Animated.View style={[styles.card, animatedStyle, style]}>
-      <Animated.View style={[styles.glow, glowStyle]} />
+    <Animated.View
+      style={[
+        styles.card,
+        variant === "elevated" && styles.elevated,
+        variant === "outline" && styles.outline,
+        animatedStyle,
+        style
+      ]}
+    >
       <View style={styles.inner}>{children}</View>
     </Animated.View>
   );
@@ -49,13 +46,27 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 16,
     overflow: "hidden"
   },
-  glow: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 14,
+  elevated: {
+    backgroundColor: colors.surfaceElevated,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12
+      },
+      android: {
+        elevation: 4
+      }
+    })
+  },
+  outline: {
+    backgroundColor: "transparent",
+    borderColor: colors.borderLight,
     borderWidth: 1
   },
   inner: {

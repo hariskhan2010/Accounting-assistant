@@ -104,15 +104,17 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     backgroundColor: "#ffffff",
-    borderRadius: 8,
-    padding: 8
+    borderRadius: 12,
+    padding: 10
   },
   error: {
     color: colors.danger,
-    fontSize: 12
+    fontSize: 12,
+    fontFamily: "Montserrat"
   },
   label: {
     color: "#000000",
+    fontFamily: "Montserrat",
     fontSize: 13,
     fontWeight: "700",
     letterSpacing: 2,

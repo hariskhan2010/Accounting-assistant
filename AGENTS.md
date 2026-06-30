@@ -94,22 +94,50 @@ A mobile and web application that handles the full financial lifecycle of a gems
 
 ---
 
-## 4. Luxury Theme
+## 4. Luxury Theme — Modern Dark (Cinema Mobile)
 
-The UI follows a dark luxury aesthetic inspired by premium jewelry and gem trading.
+The UI follows a cinematic dark luxury aesthetic inspired by premium jewelry and gem trading. All design decisions should reference the **UI/UX Pro Max** and **Frontend Design** skills.
+
+### Design Tokens
 
 ```
 Background:       #0A0A0A   (near black)
+Background deep:  #020203   (deepest)
 Card surfaces:    #1A1A2E   (deep navy)
+Card elevated:    #2A2A44
 Primary accent:   #D4AF37   (gold)
 Secondary accent: #9B59B6   (royal purple)
 Text primary:     #F5F5DC   (cream / ivory)
 Text muted:       #A89060   (aged gold)
 Danger:           #C0392B   (deep red)
 Success:          #1ABC9C   (emerald)
+Border:           rgba(255,255,255,0.08)  (hairline)
 ```
 
-Fonts: Use a serif for headings (Cormorant Garamond or Playfair Display) and a clean sans-serif for data (Inter or DM Sans). For Urdu text use **Noto Nastaliq Urdu** or **Jameel Noori Nastaleeq**.
+### Typography
+| Role | Font | Weight |
+|------|------|--------|
+| Display / Hero | Cormorant 34px | 700 |
+| Heading | Cormorant 22px | 700 |
+| Subheading | Cormorant 18px | 600 |
+| Body | Montserrat 15px | 400 |
+| Label / Data | Montserrat 12-14px | 500-600 |
+| Urdu | Noto Nastaliq Urdu 16px | — |
+
+### UI Conventions (from UI/UX Pro Max — Modern Dark)
+- `borderRadius: 16` on all cards and sheets
+- Borders use `StyleSheet.hairlineWidth` with `rgba(255,255,255,0.08)`
+- Animated ambient glow (2–3 blobs, Reanimated, opacity 0.08–0.12)
+- BlurView headers/tab bar (intensity 20, dark tint)
+- Spring animations: `damping: 20, stiffness: 90`
+- Scale press: `0.97 → 1.0` on all Pressables
+- Easing: `cubic-bezier(0.16, 1, 0.3, 1)`
+- Haptic feedback on every Pressable (expo-haptics)
+- No pure `#000000` (use `#020203` deep instead)
+- Tab bar: translucent with `rgba(10,10,10,0.85)` + hairline top border
+
+### Signature Element (from Frontend Design)
+"Ground it in the subject" — gemstone geometries, gold foil textures, mineral crystallography patterns as ambient decorative elements. The one memorable thing: **animated gemstone crest** on dashboard with ambient gold particle system.
 
 ---
 

@@ -8,29 +8,30 @@ import Animated, {
   withSequence,
   withTiming
 } from "react-native-reanimated";
+import { colors } from "@/theme";
 
 function SingleSparkle({ size, delay: sparkleDelay, x, y }) {
   const opacity = useSharedValue(0);
-  const scale = useSharedValue(0.3);
+  const scaleVal = useSharedValue(0.3);
 
   useEffect(() => {
     opacity.value = withDelay(
       sparkleDelay,
       withRepeat(
         withSequence(
-          withTiming(0.8, { duration: 1000 }),
-          withTiming(0, { duration: 1000 })
+          withTiming(0.9, { duration: 800 }),
+          withTiming(0, { duration: 800 })
         ),
         -1,
         true
       )
     );
-    scale.value = withDelay(
+    scaleVal.value = withDelay(
       sparkleDelay,
       withRepeat(
         withSequence(
-          withTiming(1.4, { duration: 1000 }),
-          withTiming(0.3, { duration: 1000 })
+          withTiming(1.5, { duration: 800 }),
+          withTiming(0.3, { duration: 800 })
         ),
         -1,
         true
@@ -38,9 +39,9 @@ function SingleSparkle({ size, delay: sparkleDelay, x, y }) {
     );
   }, []);
 
-  const animatedStyle = useAnimatedStyle(() => ({
+  const animStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }]
+    transform: [{ scale: scaleVal.value }]
   }));
 
   return (
@@ -48,22 +49,21 @@ function SingleSparkle({ size, delay: sparkleDelay, x, y }) {
       style={[
         styles.sparkle,
         { left: x, top: y, height: size, width: size },
-        animatedStyle
+        animStyle
       ]}
-    >
-      <Animated.View style={[styles.inner, { height: size * 0.15, width: size * 0.15 }]} />
-    </Animated.View>
+    />
   );
 }
 
 export function GoldSparkle({ size = 100, delay = 0, style }) {
   const sparkles = [
     { x: "10%", y: "20%", s: size * 0.25, d: delay },
-    { x: "70%", y: "30%", s: size * 0.2, d: delay + 400 },
-    { x: "40%", y: "60%", s: size * 0.22, d: delay + 800 },
-    { x: "80%", y: "70%", s: size * 0.18, d: delay + 1200 },
-    { x: "25%", y: "80%", s: size * 0.15, d: delay + 1600 },
-    { x: "55%", y: "15%", s: size * 0.2, d: delay + 2000 }
+    { x: "70%", y: "30%", s: size * 0.2, d: delay + 500 },
+    { x: "40%", y: "60%", s: size * 0.22, d: delay + 1000 },
+    { x: "80%", y: "70%", s: size * 0.18, d: delay + 1500 },
+    { x: "25%", y: "80%", s: size * 0.15, d: delay + 2000 },
+    { x: "55%", y: "15%", s: size * 0.2, d: delay + 2500 },
+    { x: "65%", y: "50%", s: size * 0.12, d: delay + 3000 }
   ];
 
   return (
@@ -79,16 +79,12 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute"
   },
-  inner: {
-    backgroundColor: "#D4AF37",
-    borderRadius: 999
-  },
   sparkle: {
     alignItems: "center",
-    borderColor: "rgba(212, 175, 55, 0.6)",
+    backgroundColor: colors.primary,
     borderRadius: 999,
-    borderWidth: 1,
     justifyContent: "center",
+    opacity: 0,
     position: "absolute"
   }
 });

@@ -3,8 +3,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
-  withSpring
+  withSpring,
+  withTiming
 } from "react-native-reanimated";
+
+const SPRING_CONFIG = { damping: 20, stiffness: 90 };
 
 export function FadeInView({ children, delay = 0, direction = "up", duration = 500, style }) {
   const opacity = useSharedValue(0);
@@ -12,9 +15,9 @@ export function FadeInView({ children, delay = 0, direction = "up", duration = 5
   const translateX = useSharedValue(direction === "left" ? 30 : direction === "right" ? -30 : 0);
 
   useEffect(() => {
-    opacity.value = withDelay(delay, withSpring(1, { damping: 16, stiffness: 100, mass: 0.7 }));
-    translateY.value = withDelay(delay, withSpring(0, { damping: 16, stiffness: 100 }));
-    translateX.value = withDelay(delay, withSpring(0, { damping: 16, stiffness: 100 }));
+    opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
+    translateY.value = withDelay(delay, withSpring(0, SPRING_CONFIG));
+    translateX.value = withDelay(delay, withSpring(0, SPRING_CONFIG));
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({

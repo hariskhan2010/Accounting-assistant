@@ -1,31 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withSpring,
-  withTiming,
-  withRepeat
+  withTiming
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { colors } from "@/theme";
+
+const SPRING_CONFIG = { damping: 20, stiffness: 90 };
 
 export function AnimatedStatBox({ label, value, tone = "default", delay = 0, onPress, showArrow = false, active = false }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
-  const borderGlow = useSharedValue(0);
   const scale = useSharedValue(0.92);
 
   useEffect(() => {
-    opacity.value = withDelay(delay, withSpring(1, { damping: 15, stiffness: 85 }));
-    translateY.value = withDelay(delay, withSpring(0, { damping: 15, stiffness: 85 }));
-    scale.value = withDelay(delay, withSpring(1, { damping: 15, stiffness: 85 }));
-    borderGlow.value = withDelay(delay + 400, withRepeat(
-      withTiming(1, { duration: 2000 }),
-      -1,
-      true
-    ));
+    opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
+    translateY.value = withDelay(delay, withSpring(0, SPRING_CONFIG));
+    scale.value = withDelay(delay, withSpring(1, SPRING_CONFIG));
   }, []);
 
   const containerStyle = useAnimatedStyle(() => ({
@@ -33,15 +29,17 @@ export function AnimatedStatBox({ label, value, tone = "default", delay = 0, onP
     transform: [{ translateY: translateY.value }, { scale: scale.value }]
   }));
 
-  const glowStyle = useAnimatedStyle(() => ({
-    opacity: borderGlow.value * 0.4
-  }));
+  const handlePress = useCallback(() => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    onPress?.();
+  }, [onPress]);
 
   const accentColor = tone === "success" ? colors.successLight : tone === "danger" ? colors.dangerLight : colors.primaryLight;
 
   const content = (
     <>
-      <Animated.View style={[styles.glow, glowStyle, { borderColor: accentColor }]} />
       <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
       <View style={styles.topRow}>
         <Text style={styles.label}>{label}</Text>
@@ -67,7 +65,7 @@ export function AnimatedStatBox({ label, value, tone = "default", delay = 0, onP
   return (
     <Animated.View style={[styles.box, active && styles.boxActive, containerStyle]}>
       {onPress ? (
-        <Pressable accessibilityRole="button" onPress={onPress} style={styles.pressable}>
+        <Pressable accessibilityRole="button" onPress={handlePress} style={styles.pressable}>
           {content}
         </Pressable>
       ) : (
@@ -79,8 +77,8 @@ export function AnimatedStatBox({ label, value, tone = "default", delay = 0, onP
 
 const styles = StyleSheet.create({
   accentBar: {
-    borderTopLeftRadius: 14,
-    borderTopRightRadius: 14,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     height: 2.5,
     left: 0,
     opacity: 0.5,
@@ -91,21 +89,17 @@ const styles = StyleSheet.create({
   box: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
     minHeight: 92,
-    overflow: "hidden",
+    overflow: "hidden"
   },
   boxActive: {
     borderColor: colors.primary
   },
-  glow: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 14,
-    borderWidth: 1.5
-  },
   label: {
     color: colors.textMuted,
+    fontFamily: "Montserrat",
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 1.5,
@@ -114,9 +108,9 @@ const styles = StyleSheet.create({
   },
   arrowButton: {
     alignItems: "center",
-    borderColor: colors.borderLight,
+    borderColor: colors.border,
     borderRadius: 14,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     height: 28,
     justifyContent: "center",
     width: 28
@@ -136,6 +130,7 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   value: {
+    fontFamily: "Montserrat",
     fontSize: 24,
     fontVariant: ["tabular-nums"],
     fontWeight: "800"

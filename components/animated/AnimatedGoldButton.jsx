@@ -1,43 +1,41 @@
-import { useEffect } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect } from "react";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withSpring,
-  withTiming,
-  withSequence,
-  withRepeat
+  withTiming
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { colors } from "@/theme";
 
+const SPRING_CONFIG = { damping: 20, stiffness: 300 };
+
 export function AnimatedGoldButton({ title, icon, onPress, disabled, style, delay = 0, variant = "primary" }) {
-  const opacity = useSharedValue(0);
-  const scale = useSharedValue(0.9);
-  const shimmer = useSharedValue(0);
+  const appearOpacity = useSharedValue(0);
+  const appearScale = useSharedValue(0.9);
   const pressScale = useSharedValue(1);
 
   useEffect(() => {
-    opacity.value = withDelay(delay, withSpring(1, { damping: 16, stiffness: 100 }));
-    scale.value = withDelay(delay, withSpring(1, { damping: 16, stiffness: 100 }));
-    shimmer.value = withDelay(delay + 500, withRepeat(
-      withSequence(
-        withTiming(1, { duration: 2500 }),
-        withTiming(0, { duration: 2500 })
-      ),
-      -1,
-      true
-    ));
+    appearOpacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
+    appearScale.value = withDelay(delay, withSpring(1, { damping: 20, stiffness: 90 }));
+  }, []);
+
+  const handlePressIn = useCallback(() => {
+    pressScale.value = withSpring(0.97, SPRING_CONFIG);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+  }, []);
+
+  const handlePressOut = useCallback(() => {
+    pressScale.value = withSpring(1, SPRING_CONFIG);
   }, []);
 
   const appearStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ scale: scale.value * pressScale.value }]
-  }));
-
-  const shimmerStyle = useAnimatedStyle(() => ({
-    opacity: shimmer.value * 0.12,
-    transform: [{ translateX: shimmer.value * 250 }]
+    opacity: appearOpacity.value,
+    transform: [{ scale: appearScale.value * pressScale.value }]
   }));
 
   const isPrimary = variant === "primary";
@@ -47,20 +45,21 @@ export function AnimatedGoldButton({ title, icon, onPress, disabled, style, dela
       <Pressable
         accessibilityRole="button"
         disabled={disabled}
-        onPressIn={() => { pressScale.value = withSpring(0.96); }}
-        onPressOut={() => { pressScale.value = withSpring(1); }}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
         onPress={onPress}
         style={({ pressed }) => [
-          styles.button,
+          styles.base,
           isPrimary ? styles.primary : styles.secondary,
+          variant === "ghost" && styles.ghost,
           disabled && styles.disabled,
-          pressed && !disabled && styles.pressed,
+          pressed && !disabled && isPrimary && styles.primaryPressed,
+          pressed && !disabled && !isPrimary && styles.secondaryPressed,
           style
         ]}
       >
-        <Animated.View style={[styles.shimmer, shimmerStyle]} />
         {icon ? <View style={styles.icon}>{icon}</View> : null}
-        <Text style={[styles.text, !isPrimary && styles.secondaryText]}>
+        <Text style={[styles.text, isPrimary && styles.primaryText, variant === "ghost" && styles.ghostText]}>
           {title}
         </Text>
       </Pressable>
@@ -69,25 +68,14 @@ export function AnimatedGoldButton({ title, icon, onPress, disabled, style, dela
 }
 
 const styles = StyleSheet.create({
-  button: {
+  base: {
     alignItems: "center",
     borderRadius: 12,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
     minHeight: 48,
-    overflow: "hidden",
-    paddingHorizontal: 16
-  },
-  disabled: {
-    opacity: 0.4
-  },
-  icon: {
-    marginTop: 1,
-    zIndex: 1
-  },
-  pressed: {
-    opacity: 0.9
+    paddingHorizontal: 20
   },
   primary: {
     backgroundColor: colors.primary
@@ -97,19 +85,33 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderWidth: 1.5
   },
-  secondaryText: {
-    color: colors.primary
+  ghost: {
+    backgroundColor: "transparent",
+    borderWidth: 0
   },
-  shimmer: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.primaryLight,
-    width: 100,
-    transform: [{ skewX: "-25deg" }]
+  disabled: {
+    opacity: 0.35
+  },
+  icon: {
+    zIndex: 1
+  },
+  primaryPressed: {
+    backgroundColor: colors.primaryDark
+  },
+  secondaryPressed: {
+    borderColor: colors.primaryLight,
+    backgroundColor: colors.glowGold
   },
   text: {
-    color: colors.background,
+    fontFamily: "Montserrat",
     fontSize: 15,
-    fontWeight: "800",
+    fontWeight: "700",
     zIndex: 1
+  },
+  primaryText: {
+    color: colors.background
+  },
+  ghostText: {
+    color: colors.primary
   }
 });

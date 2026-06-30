@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     paddingTop: 16
   },
   screen: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundDeep,
     flex: 1
   }
 });

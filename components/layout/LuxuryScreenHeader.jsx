@@ -62,31 +62,34 @@ const styles = StyleSheet.create({
   },
   goldDivider: {
     backgroundColor: colors.primary,
-    height: 1.5,
+    height: StyleSheet.hairlineWidth,
     marginHorizontal: 20,
-    opacity: 0.3
+    opacity: 0.4
   },
   subtitle: {
     color: colors.textMuted,
-    fontSize: 13,
+    fontFamily: "Montserrat",
+    fontSize: 14,
+    fontWeight: "400",
     letterSpacing: 0.3
   },
   subtitleCompact: {
-    fontSize: 12
+    fontSize: 13
   },
   title: {
     color: colors.text,
-    fontSize: 26,
+    fontFamily: "Cormorant",
+    fontSize: 28,
     fontWeight: "700"
   },
   titleCompact: {
-    fontSize: 22
+    fontSize: 24
   },
   wrap: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden"
   }
 });

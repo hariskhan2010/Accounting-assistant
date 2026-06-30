@@ -1,81 +1,73 @@
-import { useEffect } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useCallback } from "react";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
-  withSequence,
-  withRepeat
+  withTiming
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { colors } from "@/theme";
+
+const SPRING_CONFIG = { damping: 20, stiffness: 300 };
+const EASING = [0.16, 1, 0.3, 1];
 
 export function GoldButton({ title, icon, onPress, disabled, style, variant = "primary" }) {
   const scale = useSharedValue(1);
-  const shimmer = useSharedValue(0);
 
-  useEffect(() => {
-    shimmer.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 2000 }),
-        withTiming(0, { duration: 2000 })
-      ),
-      -1,
-      true
-    );
+  const handlePressIn = useCallback(() => {
+    scale.value = withSpring(0.97, SPRING_CONFIG);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
   }, []);
 
-  const shimmerStyle = useAnimatedStyle(() => ({
-    opacity: shimmer.value * 0.15,
-    transform: [{ translateX: shimmer.value * 200 }]
+  const handlePressOut = useCallback(() => {
+    scale.value = withSpring(1, SPRING_CONFIG);
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
   }));
 
   const isPrimary = variant === "primary";
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      disabled={disabled}
-      onPressIn={() => { scale.value = withSpring(0.96); }}
-      onPressOut={() => { scale.value = withSpring(1); }}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        isPrimary ? styles.primary : styles.secondary,
-        disabled && styles.disabled,
-        pressed && !disabled && styles.pressed,
-        style
-      ]}
-    >
-      <Animated.View style={[styles.shimmer, shimmerStyle]} />
-      {icon ? <View style={styles.icon}>{icon}</View> : null}
-      <Text style={[styles.text, !isPrimary && styles.secondaryText]}>
-        {title}
-      </Text>
-    </Pressable>
+    <Animated.View style={animatedStyle}>
+      <Pressable
+        accessibilityRole="button"
+        disabled={disabled}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onPress={onPress}
+        style={({ pressed }) => [
+          styles.base,
+          isPrimary ? styles.primary : styles.secondary,
+          variant === "ghost" && styles.ghost,
+          disabled && styles.disabled,
+          pressed && !disabled && isPrimary && styles.primaryPressed,
+          pressed && !disabled && !isPrimary && styles.secondaryPressed,
+          style
+        ]}
+      >
+        {icon ? <View style={styles.icon}>{icon}</View> : null}
+        <Text style={[styles.text, isPrimary && styles.primaryText, variant === "ghost" && styles.ghostText]}>
+          {title}
+        </Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
+  base: {
     alignItems: "center",
-    borderRadius: 10,
+    borderRadius: 12,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
     minHeight: 48,
-    overflow: "hidden",
-    paddingHorizontal: 16
-  },
-  disabled: {
-    opacity: 0.4
-  },
-  icon: {
-    marginTop: 1,
-    zIndex: 1
-  },
-  pressed: {
-    opacity: 0.9
+    paddingHorizontal: 20
   },
   primary: {
     backgroundColor: colors.primary
@@ -85,19 +77,32 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderWidth: 1.5
   },
-  secondaryText: {
-    color: colors.primary
+  ghost: {
+    backgroundColor: "transparent",
+    borderWidth: 0
   },
-  shimmer: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.primaryLight,
-    width: 80,
-    transform: [{ skewX: "-20deg" }]
+  disabled: {
+    opacity: 0.35
+  },
+  icon: {
+    zIndex: 1
+  },
+  primaryPressed: {
+    backgroundColor: colors.primaryDark
+  },
+  secondaryPressed: {
+    borderColor: colors.primaryLight,
+    backgroundColor: colors.glowGold
   },
   text: {
-    color: colors.background,
     fontSize: 15,
     fontWeight: "700",
     zIndex: 1
+  },
+  primaryText: {
+    color: colors.background
+  },
+  ghostText: {
+    color: colors.primary
   }
 });

@@ -66,6 +66,7 @@ export function DataTable({ columns, rows, emptyLabel = "No records yet", onRowP
 const styles = StyleSheet.create({
   cell: {
     color: colors.text,
+    fontFamily: "Montserrat",
     fontSize: 13,
     fontVariant: ["tabular-nums"],
     minWidth: 120,
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
   },
   headerCell: {
     color: colors.primary,
+    fontFamily: "Montserrat",
     fontWeight: "800",
     fontSize: 12,
     letterSpacing: 0.8,
@@ -102,8 +104,8 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     backgroundColor: colors.surfaceMuted,
-    borderBottomColor: colors.borderLight,
-    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: "row"
   },
   row: {
@@ -120,8 +122,8 @@ const styles = StyleSheet.create({
   table: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden"
   }
 });

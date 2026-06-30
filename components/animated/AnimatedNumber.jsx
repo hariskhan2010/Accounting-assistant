@@ -34,6 +34,7 @@ export function AnimatedNumber({ value, duration = 800, style }) {
 const styles = StyleSheet.create({
   text: {
     color: colors.text,
+    fontFamily: "Montserrat",
     fontSize: 22,
     fontVariant: ["tabular-nums"],
     fontWeight: "700"

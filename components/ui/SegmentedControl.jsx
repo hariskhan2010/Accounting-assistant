@@ -15,9 +15,21 @@ export function SegmentedControl({ options, value, onChange }) {
           <Pressable
             key={optionValue}
             onPress={() => onChange(optionValue)}
-            style={[styles.option, compact && styles.optionCompact, active && styles.active]}
+            style={({ pressed }) => [
+              styles.option,
+              compact && styles.optionCompact,
+              active && styles.active,
+              pressed && !active && styles.optionPressed
+            ]}
           >
-            <Text numberOfLines={2} style={[styles.text, compact && styles.textCompact, active && styles.activeText]}>
+            <Text
+              numberOfLines={2}
+              style={[
+                styles.text,
+                compact && styles.textCompact,
+                active && styles.activeText
+              ]}
+            >
               {option.name || option.label}
             </Text>
             {active && <View style={styles.activeDot} />}
@@ -30,7 +42,7 @@ export function SegmentedControl({ options, value, onChange }) {
 
 const styles = StyleSheet.create({
   active: {
-    backgroundColor: "rgba(212, 175, 55, 0.15)"
+    backgroundColor: colors.glowGold
   },
   activeDot: {
     backgroundColor: colors.primary,
@@ -47,7 +59,7 @@ const styles = StyleSheet.create({
   },
   option: {
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 10,
     flexGrow: 1,
     flexShrink: 1,
     justifyContent: "center",
@@ -63,8 +75,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 7
   },
+  optionPressed: {
+    backgroundColor: "rgba(255, 255, 255, 0.04)"
+  },
   text: {
     color: colors.textMuted,
+    fontFamily: "Montserrat",
     fontSize: 12,
     fontWeight: "700",
     textAlign: "center"
@@ -75,15 +91,15 @@ const styles = StyleSheet.create({
   wrap: {
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 10,
-    borderWidth: 1,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 2,
     padding: 3
   },
   wrapCompact: {
-    borderRadius: 9,
+    borderRadius: 10,
     padding: 2
   }
 });
