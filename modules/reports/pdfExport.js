@@ -1,6 +1,8 @@
+import { Platform } from "react-native";
 import * as Print from "expo-print";
 import { getCompanyName } from "@/modules/accounting/constants";
 import { formatMoney } from "@/modules/accounting/localAccountingStore";
+import { downloadTextAsFile, isWeb } from "./downloadWeb";
 
 export function buildInvoiceHtml(sale) {
   const total = formatMoney(sale.total);
@@ -54,6 +56,14 @@ export function buildInvoiceHtml(sale) {
 }
 
 export async function exportInvoicePdf(sale) {
+  if (isWeb()) {
+    downloadTextAsFile(
+      buildInvoiceHtml(sale),
+      `invoice-${sale.invoiceNo}.html`,
+      "text/html"
+    );
+    return { uri: null };
+  }
   return Print.printToFileAsync({
     html: buildInvoiceHtml(sale)
   });
@@ -99,6 +109,15 @@ export async function exportFinancialReportPdf({ title, profitAndLoss, salesSumm
       </body>
     </html>
   `;
+
+  if (isWeb()) {
+    downloadTextAsFile(
+      html,
+      `financial-report-${new Date().toISOString().slice(0, 10)}.html`,
+      "text/html"
+    );
+    return { uri: null };
+  }
 
   return Print.printToFileAsync({ html });
 }

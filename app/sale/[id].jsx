@@ -24,7 +24,11 @@ export default function SaleDetailScreen() {
 
     try {
       const result = await exportInvoicePdf(sale);
-      Alert.alert("Invoice created", result.uri);
+      if (result.uri) {
+        Alert.alert("Invoice created", result.uri);
+      } else {
+        Alert.alert("Invoice downloaded", "Check your downloads folder.");
+      }
     } catch (error) {
       Alert.alert("Invoice failed", error.message);
     }

@@ -33,20 +33,20 @@ export const typography = {
     lineHeight: 18
   },
   label: {
-    fontFamily: "Montserrat",
+    fontFamily: "Montserrat-Medium",
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
     letterSpacing: 0.5
   },
   data: {
-    fontFamily: "Montserrat",
+    fontFamily: "Montserrat-SemiBold",
     fontWeight: "600",
     fontSize: 20,
     fontVariant: ["tabular-nums"]
   },
   dataSmall: {
-    fontFamily: "Montserrat",
+    fontFamily: "Montserrat-Medium",
     fontWeight: "500",
     fontSize: 14,
     fontVariant: ["tabular-nums"]

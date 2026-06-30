@@ -12,13 +12,15 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@expo-google-fonts/cormorant": "^0.4.2",
+    "@expo-google-fonts/montserrat": "^0.4.2",
+    "@expo-google-fonts/noto-nastaliq-urdu": "^0.4.2",
     "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "~14.0.4",
     "@opentelemetry/api": "^1.9.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
-    "@shopify/react-native-skia": "1.5.0",
     "@supabase/supabase-js": "^2.45.4",
     "expo": "~52.0.0",
     "expo-asset": "~11.0.5",
@@ -43,8 +45,6 @@
     "react-native-svg": "15.8.0",
     "react-native-web": "~0.19.13",
     "three": "^0.184.0",
-    "three-mesh-bvh": "^0.8.0",
-    "victory-native": "41.16.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

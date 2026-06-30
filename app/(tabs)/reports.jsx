@@ -60,7 +60,11 @@ export default function ReportsScreen() {
   const exportPdf = async () => {
     try {
       const result = await exportFinancialReportPdf({ title: "Financial Report", ...report });
-      Alert.alert("PDF created", result.uri);
+      if (result.uri) {
+        Alert.alert("PDF created", result.uri);
+      } else {
+        Alert.alert("PDF downloaded", "Check your downloads folder.");
+      }
     } catch (error) {
       Alert.alert("PDF export failed", error.message);
     }
