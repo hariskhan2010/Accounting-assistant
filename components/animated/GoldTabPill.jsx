@@ -13,20 +13,25 @@ const iconMap = {
   orders: { icon: "briefcase", lib: "ion" },
   barcodes: { icon: "barcode", lib: "ion" },
   stock: { icon: "cube", lib: "ion" },
+  purchases: { icon: "cart", lib: "ion" },
   sales: { icon: "receipt", lib: "ion" },
   expenses: { icon: "wallet", lib: "ion" },
+  minerals: { icon: "diamond-stone", lib: "material" },
+  staff: { icon: "people", lib: "ion" },
   reports: { icon: "bar-chart", lib: "ion" },
-  voice: { icon: "chatbubbles", lib: "ion" },
-  minerals: { icon: "diamond-stone", lib: "material" }
+  voice: { icon: "chatbubbles", lib: "ion" }
 };
 
 const TABS = [
-  { name: "index", label: "Dashboard" },
+  { name: "index", label: "Home" },
   { name: "orders", label: "Orders" },
   { name: "barcodes", label: "Barcodes" },
   { name: "stock", label: "Stock" },
-  { name: "sales", label: "Sales" },
-  { name: "expenses", label: "Expenses" },
+  { name: "purchases", label: "Buy" },
+  { name: "sales", label: "Sell" },
+  { name: "expenses", label: "Spend" },
+  { name: "minerals", label: "Minerals" },
+  { name: "staff", label: "Staff" },
   { name: "reports", label: "Reports" },
   { name: "voice", label: "AI" }
 ];

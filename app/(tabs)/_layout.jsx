@@ -8,8 +8,11 @@ export default function TabsLayout() {
       <Tabs.Screen name="orders" options={{ title: "Orders" }} />
       <Tabs.Screen name="barcodes" options={{ title: "Barcodes" }} />
       <Tabs.Screen name="stock" options={{ title: "Stock" }} />
+      <Tabs.Screen name="purchases" options={{ title: "Purchases" }} />
       <Tabs.Screen name="sales" options={{ title: "Sales" }}/>
       <Tabs.Screen name="expenses" options={{ title: "Expenses" }} />
+      <Tabs.Screen name="minerals" options={{ title: "Minerals" }} />
+      <Tabs.Screen name="staff" options={{ title: "Staff" }} />
       <Tabs.Screen name="reports" options={{ title: "Reports" }} />
       <Tabs.Screen name="voice" options={{ title: "AI Assistant" }} />
     </Tabs>
