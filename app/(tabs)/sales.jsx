@@ -3,6 +3,7 @@ import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { AnimatedCard } from "@/components/animated/AnimatedCard";
 import { AnimatedGoldButton } from "@/components/animated/AnimatedGoldButton";
 import { FadeInView } from "@/components/animated/FadeInView";
+import { SuccessBurst } from "@/components/animated/SuccessBurst";
 import { DataTable } from "@/components/ui/DataTable";
 import { LuxuryTextInput } from "@/components/ui/LuxuryTextInput";
 import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
@@ -39,6 +40,7 @@ export default function SalesScreen() {
   const [companyFilter, setCompanyFilter] = useState("all");
   const [form, setForm] = useState(initialForm);
   const [rows, setRows] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const refresh = useCallback(async () => {
     const { data } = await listSales({ companyId: companyFilter });
@@ -85,14 +87,15 @@ export default function SalesScreen() {
       date: form.date,
       invoiceNo: generateInvoiceNumber(state.sales.length + 1)
     });
-    Alert.alert("Success", `Sale to ${form.buyer} for ${form.item} has been saved.`);
+    setShowSuccess(true);
     refresh();
   };
 
   return (
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} style={styles.screen}>
       <LuxuryScreenHeader colorIndex={2} title="Sales" subtitle="Invoice sales with stock-out control" />
-      <AnimatedCard delay={100}>
+      <AnimatedCard delay={100} shimmer>
+        <SuccessBurst visible={showSuccess} onComplete={() => setShowSuccess(false)} />
         <Text style={styles.cardTitle}>✦ New Sale</Text>
         <SegmentedControl options={COMPANIES} value={form.companyId} onChange={(companyId) => setForm((current) => ({ ...current, companyId }))} />
         <LuxuryTextInput placeholder="Invoice no" value={form.invoiceNo} onChangeText={(invoiceNo) => setForm((current) => ({ ...current, invoiceNo }))} />

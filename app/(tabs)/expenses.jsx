@@ -3,6 +3,7 @@ import { Alert, ScrollView, StyleSheet, Text } from "react-native";
 import { AnimatedCard } from "@/components/animated/AnimatedCard";
 import { AnimatedGoldButton } from "@/components/animated/AnimatedGoldButton";
 import { FadeInView } from "@/components/animated/FadeInView";
+import { SuccessBurst } from "@/components/animated/SuccessBurst";
 import { DataTable } from "@/components/ui/DataTable";
 import { LuxuryTextInput } from "@/components/ui/LuxuryTextInput";
 import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
@@ -32,6 +33,7 @@ export default function ExpensesScreen() {
   const [companyFilter, setCompanyFilter] = useState("all");
   const [form, setForm] = useState(initialForm);
   const [rows, setRows] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const refresh = useCallback(async () => {
     const { data } = await listExpenses({ companyId: companyFilter });
@@ -62,14 +64,15 @@ export default function ExpensesScreen() {
     }
 
     setForm({ ...initialForm, companyId: form.companyId, date: form.date, type: form.type });
-    Alert.alert("Success", `Expense of ${formatMoney(form.amount)} has been saved.`);
+    setShowSuccess(true);
     refresh();
   };
 
   return (
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} style={styles.screen}>
       <LuxuryScreenHeader colorIndex={3} title="Expenses" subtitle="Cutting, polishing, lab, shipping, rent, utilities" />
-      <AnimatedCard delay={100}>
+      <AnimatedCard delay={100} shimmer>
+        <SuccessBurst visible={showSuccess} onComplete={() => setShowSuccess(false)} />
         <Text style={styles.cardTitle}>✦ New Expense</Text>
         <SegmentedControl options={COMPANIES} value={form.companyId} onChange={(companyId) => setForm((current) => ({ ...current, companyId }))} />
         <LuxuryTextInput placeholder="Date YYYY-MM-DD" value={form.date} onChangeText={(date) => setForm((current) => ({ ...current, date }))} />

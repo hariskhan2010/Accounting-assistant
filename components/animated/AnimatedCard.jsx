@@ -7,11 +7,12 @@ import Animated, {
   withSpring,
   withTiming
 } from "react-native-reanimated";
+import { GoldShimmerBorder } from "@/components/animated/GoldShimmerBorder";
 import { colors } from "@/theme";
 
 const SPRING_CONFIG = { damping: 20, stiffness: 90 };
 
-export function AnimatedCard({ children, delay = 0, variant = "default", style }) {
+export function AnimatedCard({ children, delay = 0, variant = "default", style, shimmer = false }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
   const scale = useSharedValue(0.93);
@@ -27,7 +28,7 @@ export function AnimatedCard({ children, delay = 0, variant = "default", style }
     transform: [{ translateY: translateY.value }, { scale: scale.value }]
   }));
 
-  return (
+  const cardInner = (
     <Animated.View
       style={[
         styles.card,
@@ -40,6 +41,12 @@ export function AnimatedCard({ children, delay = 0, variant = "default", style }
       <View style={styles.inner}>{children}</View>
     </Animated.View>
   );
+
+  if (shimmer) {
+    return <GoldShimmerBorder active>{cardInner}</GoldShimmerBorder>;
+  }
+
+  return cardInner;
 }
 
 const styles = StyleSheet.create({

@@ -9,6 +9,7 @@ import Animated, {
   withTiming
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { AnimatedCounter } from "@/components/animated/AnimatedCounter";
 import { colors } from "@/theme";
 
 const SPRING_CONFIG = { damping: 20, stiffness: 90 };
@@ -49,16 +50,7 @@ export function AnimatedStatBox({ label, value, tone = "default", delay = 0, onP
           </View>
         ) : null}
       </View>
-      <Text
-        style={[
-          styles.value,
-          tone === "success" && { color: colors.success },
-          tone === "danger" && { color: colors.danger },
-          tone === "default" && { color: colors.primary }
-        ]}
-      >
-        {value}
-      </Text>
+      <AnimatedCounter value={value} tone={tone} prefix="" suffix="" />
     </>
   );
 

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { StaggerList } from "@/components/animated/StaggerList";
+import { BreathingMicPulse } from "@/components/voice/BreathingMicPulse";
 import { Ionicons } from "@expo/vector-icons";
 import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
@@ -135,9 +136,7 @@ export default function VoiceScreen() {
         {messages.length === 0 ? (
           <FadeInView>
             <View style={styles.empty}>
-              <View style={styles.gemIcon}>
-                <Text style={styles.gemChar}>💎</Text>
-              </View>
+              <BreathingMicPulse size={56} active />
               <Text style={styles.emptyTitle}>Financial Assistant</Text>
               <Text style={styles.emptyHint}>Type a question or command in Roman Urdu.</Text>
             </View>
@@ -204,17 +203,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 0.5
   },
-  gemChar: {
-    fontSize: 48
-  },
-  gemIcon: {
-    alignItems: "center",
-    backgroundColor: "rgba(212, 175, 55, 0.1)",
-    borderRadius: 50,
-    height: 80,
-    justifyContent: "center",
-    width: 80
-  },
+
   headerArea: {
     paddingBottom: 8,
     paddingHorizontal: 16,

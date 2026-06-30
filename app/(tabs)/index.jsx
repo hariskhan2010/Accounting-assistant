@@ -233,7 +233,7 @@ export default function DashboardScreen() {
         </GsapReveal>
 
         <GsapReveal delay={220}>
-          <AnimatedCard style={styles.chartCard}>
+          <AnimatedCard shimmer style={styles.chartCard}>
             <Text style={styles.chartTitle}>Revenue Overview</Text>
             <RevenueChart />
           </AnimatedCard>
