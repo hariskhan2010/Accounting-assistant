@@ -101,17 +101,24 @@ The UI follows a cinematic dark luxury aesthetic inspired by premium jewelry and
 ### Design Tokens
 
 ```
-Background:       #0A0A0A   (near black)
-Background deep:  #020203   (deepest)
-Card surfaces:    #1A1A2E   (deep navy)
-Card elevated:    #2A2A44
-Primary accent:   #D4AF37   (gold)
-Secondary accent: #9B59B6   (royal purple)
-Text primary:     #F5F5DC   (cream / ivory)
-Text muted:       #A89060   (aged gold)
-Danger:           #C0392B   (deep red)
-Success:          #1ABC9C   (emerald)
-Border:           rgba(255,255,255,0.08)  (hairline)
+Background:       #15151F   (dark navy-charcoal — warm, not harsh)
+Background deep:  #0D0D14   (deepest)
+Card surfaces:    #1E1E32   (deep navy with warm undertone)
+Card muted:       #282840
+Card elevated:    #353550
+Primary accent:   #D4AF37   (gold — CTAs, active states)
+Secondary accent: #E8C766   (honey-gold — badges, highlights)
+Accent:           #9B59B6   (royal purple)
+Accent light:     #C084FC
+Text primary:     #EDE8D0   (warm cream / ivory)
+Text muted:       #C8A870   (warm gold)
+Text dim:         #6B5D3A   (dark gold)
+Danger:           #E07856   (warm coral)
+Success:          #7FB069   (soft sage)
+Warning:          #F0B34B   (warm amber)
+Border:           rgba(212,175,55,0.12)  (soft gold hairline)
+Card shadow:      rgba(212,175,55,0.08)  (gold-tinted glow)
+Tab bar:          rgba(21,21,31,0.85)
 ```
 
 ### Typography
@@ -125,8 +132,8 @@ Border:           rgba(255,255,255,0.08)  (hairline)
 | Urdu | Noto Nastaliq Urdu 16px | — |
 
 ### UI Conventions (from UI/UX Pro Max — Modern Dark)
-- `borderRadius: 16` on all cards and sheets
-- Borders use `StyleSheet.hairlineWidth` with `rgba(255,255,255,0.08)`
+- `borderRadius: 16` on all cards and sheets (min `12`, max `20`)
+- Borders use `StyleSheet.hairlineWidth` with `rgba(212,175,55,0.12)`
 - Animated ambient glow (2–3 blobs, Reanimated, opacity 0.08–0.12)
 - BlurView headers/tab bar (intensity 20, dark tint)
 - Spring animations: `damping: 20, stiffness: 90`
