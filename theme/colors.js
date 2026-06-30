@@ -6,7 +6,7 @@ module.exports = {
   // Surfaces
   surface: "#1A1A2E",
   surfaceMuted: "#24243A",
-  surfaceElevated: "#2A2A44",
+  surfaceElevated: "#3A3A5C",
 
   // Brand
   primary: "#D4AF37",
@@ -17,7 +17,7 @@ module.exports = {
 
   // Text
   text: "#F5F5DC",
-  textMuted: "#A89060",
+  textMuted: "#C8A870",
   textDim: "#6B5D3A",
 
   // Semantic
