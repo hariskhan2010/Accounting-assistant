@@ -124,17 +124,17 @@ const styles = StyleSheet.create({
   table: {
     backgroundColor: colors.surface,
     borderColor: colors.borderLight,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.35,
-        shadowRadius: 10
+        shadowColor: "#D4AF37",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 14
       },
       android: {
-        elevation: 5
+        elevation: 6
       }
     })
   }

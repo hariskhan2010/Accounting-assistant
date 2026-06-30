@@ -1,33 +1,35 @@
 module.exports = {
   // Base
-  background: "#0A0A0A",
-  backgroundDeep: "#020203",
+  background: "#15151F",
+  backgroundDeep: "#0D0D14",
 
   // Surfaces
-  surface: "#1A1A2E",
-  surfaceMuted: "#24243A",
-  surfaceElevated: "#3A3A5C",
+  surface: "#1E1E32",
+  surfaceMuted: "#282840",
+  surfaceElevated: "#353550",
 
   // Brand
   primary: "#D4AF37",
   primaryLight: "#F0D060",
   primaryDark: "#B8962E",
-  secondary: "#9B59B6",
-  secondaryLight: "#C084FC",
+  secondary: "#E8C766",
+  secondaryLight: "#F2D98A",
+  accent: "#9B59B6",
+  accentLight: "#C084FC",
 
   // Text
-  text: "#F5F5DC",
+  text: "#EDE8D0",
   textMuted: "#C8A870",
   textDim: "#6B5D3A",
 
   // Semantic
-  danger: "#C0392B",
-  dangerLight: "#E74C3C",
-  success: "#1ABC9C",
-  successLight: "#48E5C0",
-  warning: "#F39C12",
+  danger: "#E07856",
+  dangerLight: "#F09B7A",
+  success: "#7FB069",
+  successLight: "#9EC487",
+  warning: "#F0B34B",
 
-  // Borders (hairline)
+  // Borders
   border: "rgba(212, 175, 55, 0.12)",
   borderLight: "rgba(212, 175, 55, 0.25)",
   borderGlow: "rgba(212, 175, 55, 0.35)",
@@ -38,13 +40,16 @@ module.exports = {
 
   // Glow / Effects
   glowGold: "rgba(212, 175, 55, 0.15)",
-  glowPurple: "rgba(155, 89, 182, 0.15)",
+  glowAccent: "rgba(232, 199, 102, 0.15)",
   accentGlow: "rgba(212, 175, 55, 0.2)",
+
+  // Shadows
+  cardShadow: "rgba(212, 175, 55, 0.08)",
 
   // Overlay
   overlay: "rgba(0, 0, 0, 0.6)",
 
   // Tab / Nav
-  tabBar: "rgba(10, 10, 10, 0.85)",
+  tabBar: "rgba(21, 21, 31, 0.85)",
   tabBarBorder: "rgba(255, 255, 255, 0.06)"
 };

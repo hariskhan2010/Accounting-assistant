@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: colors.background,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: "center",
     overflow: "hidden"

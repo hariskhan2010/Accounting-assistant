@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   wrap: {
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     flexDirection: "row",
     flexWrap: "wrap",
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     padding: 3
   },
   wrapCompact: {
-    borderRadius: 10,
+    borderRadius: 14,
     padding: 2
   }
 });

@@ -62,7 +62,7 @@ export function GoldButton({ title, icon, onPress, disabled, style, variant = "p
 const styles = StyleSheet.create({
   base: {
     alignItems: "center",
-    borderRadius: 12,
+    borderRadius: 16,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",

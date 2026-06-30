@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   wrap: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     overflow: "hidden"
   }
