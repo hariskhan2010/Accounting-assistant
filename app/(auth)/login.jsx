@@ -4,7 +4,6 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-na
 import { FadeInView } from "@/components/animated/FadeInView";
 import { AnimatedGoldButton } from "@/components/animated/AnimatedGoldButton";
 import { LuxuryTextInput } from "@/components/ui/LuxuryTextInput";
-import { GemHero } from "@/components/gemstone/GemHero";
 import { signInWithOtp } from "@/services/auth";
 import { colors } from "@/theme";
 
@@ -27,10 +26,6 @@ export default function LoginScreen() {
       style={styles.screen}
     >
       <View style={styles.container}>
-        <FadeInView delay={100}>
-          <GemHero compact />
-        </FadeInView>
-
         {sent ? (
           <FadeInView delay={200} direction="up">
             <View style={styles.sentBox}>

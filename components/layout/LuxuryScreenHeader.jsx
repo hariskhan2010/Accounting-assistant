@@ -7,7 +7,6 @@ import Animated, {
   withSpring,
   withTiming
 } from "react-native-reanimated";
-import { LazyGemScene } from "@/components/gemstone/LazyGemScene";
 import { colors } from "@/theme";
 
 function AnimatedText({ children, delay = 0, style }) {
@@ -27,14 +26,12 @@ function AnimatedText({ children, delay = 0, style }) {
   return <Animated.Text style={[animatedStyle, style]}>{children}</Animated.Text>;
 }
 
-export function LuxuryScreenHeader({ title, subtitle, sceneHeight = 118, colorIndex = 0 }) {
+export function LuxuryScreenHeader({ title, subtitle }) {
   const { width } = useWindowDimensions();
   const compact = width < 390;
-  const resolvedSceneHeight = compact ? Math.min(sceneHeight, 88) : sceneHeight;
 
   return (
     <View style={styles.wrap}>
-      <LazyGemScene colorIndex={colorIndex} height={resolvedSceneHeight} scale={compact ? 0.44 : 0.55} speed={0.45} />
       <View style={[styles.copy, compact && styles.copyCompact]}>
         <AnimatedText delay={200} style={[styles.title, compact && styles.titleCompact]}>
           {title}
