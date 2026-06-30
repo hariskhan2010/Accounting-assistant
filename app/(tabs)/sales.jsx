@@ -122,7 +122,7 @@ export default function SalesScreen() {
 
 const styles = StyleSheet.create({
   cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" },
-  content: { gap: 16, padding: 16 },
+  content: { gap: 18, padding: 20 },
   flex: { flex: 1 },
   row: { gap: 10 },
   screen: { backgroundColor: colors.backgroundDeep, flex: 1 },

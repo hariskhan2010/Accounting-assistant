@@ -257,8 +257,9 @@ const styles = StyleSheet.create({
     textTransform: "uppercase"
   },
   content: {
-    gap: 18,
-    paddingBottom: 32
+    gap: 20,
+    paddingBottom: 40,
+    paddingHorizontal: 16
   },
   crestCircle: {
     alignItems: "center",

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { AnimatedCard } from "@/components/animated/AnimatedCard";
 import { AnimatedGoldButton } from "@/components/animated/AnimatedGoldButton";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { LuxuryTextInput } from "@/components/ui/LuxuryTextInput";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
@@ -104,9 +105,7 @@ export default function MineralsScreen() {
 
       {rows.length === 0 ? (
         <FadeInView delay={300}>
-          <View style={styles.empty}>
-            <Text style={styles.emptyText}>No mineral specimens yet</Text>
-          </View>
+          <EmptyState icon="minerals" title="No mineral specimens yet" subtitle="Add your first specimen to start tracking purchases, sales, and profit." />
         </FadeInView>
       ) : (
         rows.map((item, i) => (
@@ -150,11 +149,11 @@ export default function MineralsScreen() {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderColor: colors.borderLight,
-    borderRadius: 14,
+    borderColor: colors.border,
     borderWidth: 1,
-    gap: 6,
-    padding: 14,
+    borderRadius: 16,
+    gap: 8,
+    padding: 20,
     paddingTop: 10,
     position: "relative"
   },
@@ -164,19 +163,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" },
-  content: { gap: 16, padding: 16 },
+  content: { gap: 18, padding: 20 },
   delBtn: {
     alignSelf: "flex-end",
     padding: 4
   },
-  empty: {
-    alignItems: "center",
-    paddingVertical: 40
-  },
-  emptyText: {
-    color: colors.textMuted,
-    fontSize: 14
-  },
+
   label: {
     color: colors.textMuted,
     fontSize: 13

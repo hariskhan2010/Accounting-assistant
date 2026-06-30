@@ -28,8 +28,9 @@ module.exports = {
   warning: "#F39C12",
 
   // Borders (hairline)
-  border: "rgba(255, 255, 255, 0.08)",
+  border: "rgba(212, 175, 55, 0.12)",
   borderLight: "rgba(212, 175, 55, 0.25)",
+  borderGlow: "rgba(212, 175, 55, 0.35)",
 
   // Gradients
   goldGradientStart: "#D4AF37",

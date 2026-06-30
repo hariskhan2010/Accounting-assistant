@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, marginBottom: 12, textTransform: "uppercase" },
-  content: { gap: 16, padding: 16 },
+  content: { gap: 18, padding: 20 },
   delBtn: {
     padding: 6
   },
@@ -148,9 +148,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12
   },
   newEntryText: {
-    color: colors.background,
+    color: "#020203",
     fontSize: 15,
-    fontWeight: "700"
+    fontWeight: "800"
   },
   screen: { backgroundColor: colors.backgroundDeep, flex: 1 },
   sold: {

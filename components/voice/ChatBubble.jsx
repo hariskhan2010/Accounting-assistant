@@ -8,14 +8,6 @@ export function ChatBubble({ role, text, source }) {
   const isError = source === "error";
   const isSuccess = isAction && text.startsWith("✅");
 
-  const borderColor = isSuccess
-    ? `${colors.success}44`
-    : isError
-      ? `${colors.danger}44`
-      : assistant
-        ? `${colors.primary}33`
-        : `${colors.secondary}33`;
-
   const badgeColor = isSuccess
     ? colors.success
     : isError
@@ -27,7 +19,7 @@ export function ChatBubble({ role, text, source }) {
   const parts = text.split(/(Rs\s[\d,]+)/g);
 
   return (
-    <View style={[styles.bubble, { borderColor }, assistant ? styles.assistant : styles.user]}>
+    <View style={[styles.bubble, assistant ? styles.assistant : styles.user]}>
       <View style={styles.roleIndicator}>
         <Ionicons
           name={
@@ -39,7 +31,7 @@ export function ChatBubble({ role, text, source }) {
                   ? "diamond"
                   : "person-circle"
           }
-          size={14}
+          size={15}
           color={badgeColor}
         />
         <Text style={[styles.roleLabel, { color: badgeColor }]}>
@@ -62,14 +54,16 @@ export function ChatBubble({ role, text, source }) {
 const styles = StyleSheet.create({
   assistant: {
     alignSelf: "flex-start",
-    backgroundColor: colors.surface
+    backgroundColor: colors.surface,
+    borderLeftColor: colors.primary,
+    borderLeftWidth: 3
   },
   bubble: {
     borderRadius: 14,
-    borderWidth: 1,
+    borderWidth: 0,
     maxWidth: "90%",
-    paddingHorizontal: 16,
-    paddingVertical: 12
+    paddingHorizontal: 18,
+    paddingVertical: 14
   },
   highlight: {
     color: colors.primaryLight,
@@ -78,13 +72,13 @@ const styles = StyleSheet.create({
   roleIndicator: {
     alignItems: "center",
     flexDirection: "row",
-    gap: 6,
-    marginBottom: 8
+    gap: 7,
+    marginBottom: 10
   },
   roleLabel: {
     fontSize: 11,
     fontWeight: "800",
-    letterSpacing: 1,
+    letterSpacing: 1.2,
     textTransform: "uppercase"
   },
   text: {
@@ -96,6 +90,8 @@ const styles = StyleSheet.create({
   },
   user: {
     alignSelf: "flex-end",
-    backgroundColor: colors.surfaceMuted
+    backgroundColor: colors.surfaceMuted,
+    borderRightColor: colors.glowGold,
+    borderRightWidth: 3
   }
 });

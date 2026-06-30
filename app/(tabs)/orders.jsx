@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { Card } from "@/components/ui/Card";
@@ -93,11 +94,8 @@ export default function OrdersScreen() {
 
       {filteredOrders.length === 0 ? (
         <FadeInView delay={200}>
-          <Card style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>No orders yet</Text>
-            <Text style={styles.emptySub}>
-              Orders from eBay and Etsy will appear here automatically when customers purchase.
-            </Text>
+          <Card>
+            <EmptyState icon="orders" title="No orders yet" subtitle="Orders from eBay and Etsy will appear here automatically when customers purchase." />
           </Card>
         </FadeInView>
       ) : (
@@ -117,8 +115,8 @@ export default function OrdersScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    gap: 14,
-    padding: 16,
+    gap: 18,
+    padding: 20,
     paddingBottom: 40
   },
   screen: {
@@ -135,22 +133,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600"
   },
-  emptyCard: {
-    alignItems: "center",
-    paddingVertical: 40
-  },
-  emptyTitle: {
-    color: colors.primary,
-    fontSize: 17,
-    fontWeight: "700",
-    marginBottom: 8
-  },
-  emptySub: {
-    color: colors.textMuted,
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: "center"
-  },
+
   settingsBtn: {
     alignItems: "center",
     alignSelf: "flex-end",

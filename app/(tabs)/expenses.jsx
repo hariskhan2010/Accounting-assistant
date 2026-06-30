@@ -93,7 +93,7 @@ export default function ExpensesScreen() {
 
 const styles = StyleSheet.create({
   cardTitle: { color: colors.primary, fontFamily: "Montserrat", fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" },
-  content: { gap: 16, padding: 16 },
+  content: { gap: 18, padding: 20 },
   screen: { backgroundColor: colors.backgroundDeep, flex: 1 },
   title: { color: colors.text, fontSize: 26, fontWeight: "700" }
 });

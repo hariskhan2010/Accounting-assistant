@@ -230,10 +230,10 @@ const styles = StyleSheet.create({
   sendBtn: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 12,
-    height: 42,
+    borderRadius: 14,
+    height: 46,
     justifyContent: "center",
-    width: 42
+    width: 46
   },
   sendBtnDisabled: {
     opacity: 0.5
@@ -241,13 +241,13 @@ const styles = StyleSheet.create({
   textInput: {
     backgroundColor: colors.surface,
     borderColor: colors.borderLight,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    color: colors.textPrimary,
+    color: colors.text,
     flex: 1,
     fontSize: 15,
-    paddingHorizontal: 14,
-    paddingVertical: 10
+    paddingHorizontal: 16,
+    paddingVertical: 12
   },
   thinkingRow: {
     alignItems: "center",

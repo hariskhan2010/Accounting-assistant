@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   primaryText: {
-    color: colors.background
+    color: "#020203",
+    fontWeight: "800"
   },
   ghostText: {
     color: colors.primary

@@ -3,6 +3,7 @@ import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } 
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { Barcode128 } from "@/components/ui/Barcode128";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { FadeInView } from "@/components/animated/FadeInView";
 import { LuxuryScreenHeader } from "@/components/layout/LuxuryScreenHeader";
 import { StockEntryModal } from "@/components/orders/StockEntryModal";
@@ -65,11 +66,7 @@ export default function BarcodesScreen() {
 
       {items.length === 0 ? (
         <FadeInView delay={100}>
-          <View style={styles.empty}>
-            <Ionicons name="barcode-outline" size={48} color={colors.textMuted} />
-            <Text style={styles.emptyTitle}>No barcodes yet</Text>
-            <Text style={styles.emptySub}>Tap "New Barcode Entry" to generate your first barcode.</Text>
-          </View>
+          <EmptyState icon="barcodes" title="No barcodes yet" subtitle='Tap "New Barcode Entry" to generate your first barcode.' />
         </FadeInView>
       ) : (
         items.map((item, i) => (
@@ -113,9 +110,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12
   },
   addBtnText: {
-    color: colors.background,
+    color: "#020203",
     fontSize: 15,
-    fontWeight: "700"
+    fontWeight: "800"
   },
   available: {
     color: colors.success
@@ -123,17 +120,17 @@ const styles = StyleSheet.create({
   barcodeCard: {
     alignItems: "center",
     backgroundColor: colors.surface,
-    borderColor: colors.borderLight,
-    borderRadius: 14,
+    borderColor: colors.border,
+    borderRadius: 16,
     borderWidth: 1,
-    gap: 8,
-    padding: 16,
-    paddingTop: 12,
+    gap: 10,
+    padding: 20,
+    paddingTop: 14,
     position: "relative"
   },
   content: {
-    gap: 14,
-    padding: 16,
+    gap: 18,
+    padding: 20,
     paddingBottom: 40
   },
   deleteBtn: {
@@ -144,21 +141,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 13
   },
-  empty: {
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 60
-  },
-  emptySub: {
-    color: colors.textMuted,
-    fontSize: 13,
-    textAlign: "center"
-  },
-  emptyTitle: {
-    color: colors.primary,
-    fontSize: 17,
-    fontWeight: "700"
-  },
+
   info: {
     alignItems: "center",
     gap: 4
