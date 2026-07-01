@@ -9,6 +9,7 @@ export default function TabsLayout() {
         headerShadowVisible: false,
         headerStyle: { backgroundColor: colors.primary },
         headerTintColor: colors.backgroundDeep,
+        headerTitleAlign: "center",
         headerTitleStyle: {
           color: colors.backgroundDeep,
           fontFamily: "Montserrat",
