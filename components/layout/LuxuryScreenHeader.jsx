@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14
   },
   divider: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.success,
     height: 1,
     marginHorizontal: 20,
     opacity: 0.3

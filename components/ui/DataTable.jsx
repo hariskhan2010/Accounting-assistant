@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -7,6 +7,7 @@ import Animated, {
   withSpring
 } from "react-native-reanimated";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useReplayOnFocus } from "@/hooks/useReplayOnFocus";
 import { colors } from "@/theme";
 
 const EMPTY_ICONS = {
@@ -30,10 +31,12 @@ function AnimatedRow({ children, index }) {
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(20);
 
-  useEffect(() => {
+  useReplayOnFocus(useCallback(() => {
+    opacity.value = 0;
+    translateX.value = 20;
     opacity.value = withDelay(200 + index * 60, withSpring(1, { damping: 18, stiffness: 120 }));
     translateX.value = withDelay(200 + index * 60, withSpring(0, { damping: 18, stiffness: 120 }));
-  }, []);
+  }, [index, opacity, translateX]));
 
   const style = useAnimatedStyle(() => ({
     opacity: opacity.value,

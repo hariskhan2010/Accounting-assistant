@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
   withTiming
 } from "react-native-reanimated";
+import { useReplayOnFocus } from "@/hooks/useReplayOnFocus";
 import { colors } from "@/theme";
 
 const SPRING_CONFIG = { damping: 20, stiffness: 90 };
@@ -16,11 +17,14 @@ export function AnimatedCard({ children, delay = 0, variant = "default", style }
   const translateY = useSharedValue(30);
   const scale = useSharedValue(0.93);
 
-  useEffect(() => {
+  useReplayOnFocus(useCallback(() => {
+    opacity.value = 0;
+    translateY.value = 30;
+    scale.value = 0.93;
     opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
     translateY.value = withDelay(delay, withSpring(0, SPRING_CONFIG));
     scale.value = withDelay(delay, withSpring(1, SPRING_CONFIG));
-  }, []);
+  }, [delay, opacity, scale, translateY]));
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

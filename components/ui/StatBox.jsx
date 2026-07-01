@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
   withTiming
 } from "react-native-reanimated";
+import { useReplayOnFocus } from "@/hooks/useReplayOnFocus";
 import { colors } from "@/theme";
 
 const SPRING_CONFIG = { damping: 20, stiffness: 90 };
@@ -15,10 +16,12 @@ export function StatBox({ label, value, tone = "default", delay = 0 }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(24);
 
-  useEffect(() => {
+  useReplayOnFocus(useCallback(() => {
+    opacity.value = 0;
+    translateY.value = 24;
     opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
     translateY.value = withDelay(delay, withSpring(0, SPRING_CONFIG));
-  }, []);
+  }, [delay, opacity, translateY]));
 
   const containerStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

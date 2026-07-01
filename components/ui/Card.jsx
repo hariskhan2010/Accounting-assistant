@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -7,16 +7,19 @@ import Animated, {
   withSpring,
   withTiming
 } from "react-native-reanimated";
+import { useReplayOnFocus } from "@/hooks/useReplayOnFocus";
 import { colors } from "@/theme";
 
 export function Card({ children, style, variant = "default", delay = 0 }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
 
-  useEffect(() => {
+  useReplayOnFocus(useCallback(() => {
+    opacity.value = 0;
+    translateY.value = 20;
     opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
     translateY.value = withDelay(delay, withSpring(0, { damping: 20, stiffness: 90 }));
-  }, []);
+  }, [delay, opacity, translateY]));
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

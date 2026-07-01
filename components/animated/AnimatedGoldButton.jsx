@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -8,6 +8,7 @@ import Animated, {
   withTiming
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { useReplayOnFocus } from "@/hooks/useReplayOnFocus";
 import { colors } from "@/theme";
 
 const SPRING_CONFIG = { damping: 20, stiffness: 300 };
@@ -17,10 +18,12 @@ export function AnimatedGoldButton({ title, icon, onPress, disabled, style, dela
   const appearScale = useSharedValue(0.9);
   const pressScale = useSharedValue(1);
 
-  useEffect(() => {
+  useReplayOnFocus(useCallback(() => {
+    appearOpacity.value = 0;
+    appearScale.value = 0.9;
     appearOpacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
     appearScale.value = withDelay(delay, withSpring(1, { damping: 20, stiffness: 90 }));
-  }, []);
+  }, [appearOpacity, appearScale, delay]));
 
   const handlePressIn = useCallback(() => {
     pressScale.value = withSpring(0.97, SPRING_CONFIG);
