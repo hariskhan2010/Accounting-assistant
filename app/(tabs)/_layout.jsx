@@ -1,9 +1,23 @@
 import { Tabs } from "expo-router";
 import { GoldTabBar } from "@/components/animated/GoldTabPill";
+import { colors } from "@/theme";
 
 export default function TabsLayout() {
   return (
-    <Tabs tabBar={(props) => <GoldTabBar {...props} />}>
+    <Tabs
+      screenOptions={{
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: colors.backgroundDeep,
+        headerTitleStyle: {
+          color: colors.backgroundDeep,
+          fontFamily: "Montserrat",
+          fontSize: 16,
+          fontWeight: "700"
+        }
+      }}
+      tabBar={(props) => <GoldTabBar {...props} />}
+    >
       <Tabs.Screen name="index" options={{ title: "Dashboard" }} />
       <Tabs.Screen name="orders" options={{ title: "Orders" }} />
       <Tabs.Screen name="barcodes" options={{ title: "Barcodes" }} />
