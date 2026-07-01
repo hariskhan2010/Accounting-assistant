@@ -17,7 +17,7 @@ const statDefs = [
   { key: "purchases", label: "Purchases", tone: "default" },
   { key: "expenses", label: "Expenses", tone: "danger" },
   { key: "netProfit", label: "Net Profit", tone: "success" },
-  { key: "closingBalance", label: "Closing Balance", tone: "default" }
+  { key: "closingBalance", label: "Closing Balance", tone: "success" }
 ];
 
 export default function DashboardScreen() {
