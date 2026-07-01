@@ -12,9 +12,14 @@ export default function TabsLayout() {
         headerTitleAlign: "center",
         headerTitleStyle: {
           color: colors.backgroundDeep,
-          fontFamily: "Montserrat",
-          fontSize: 16,
-          fontWeight: "700"
+          fontFamily: "Cormorant",
+          fontSize: 23,
+          fontWeight: "700",
+          letterSpacing: 0.8,
+          textShadowColor: "rgba(237, 232, 208, 0.28)",
+          textShadowOffset: { width: 0, height: 1 },
+          textShadowRadius: 1,
+          textTransform: "uppercase"
         }
       }}
       tabBar={(props) => <GoldTabBar {...props} />}
