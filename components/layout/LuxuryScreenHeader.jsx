@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -11,10 +11,10 @@ import { colors } from "@/theme";
 
 function AnimatedText({ children, delay = 0, style }) {
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
+  const translateY = useSharedValue(16);
 
   useEffect(() => {
-    opacity.value = withDelay(delay, withTiming(1, { duration: 700 }));
+    opacity.value = withDelay(delay, withTiming(1, { duration: 600 }));
     translateY.value = withDelay(delay, withSpring(0, { damping: 18, stiffness: 100 }));
   }, []);
 
@@ -27,22 +27,15 @@ function AnimatedText({ children, delay = 0, style }) {
 }
 
 export function LuxuryScreenHeader({ title, subtitle }) {
-  const { width } = useWindowDimensions();
-  const compact = width < 390;
-
   return (
     <View style={styles.wrap}>
-      <View style={[styles.copy, compact && styles.copyCompact]}>
-        <AnimatedText delay={200} style={[styles.title, compact && styles.titleCompact]}>
-          {title}
-        </AnimatedText>
+      <View style={styles.copy}>
+        <AnimatedText delay={200} style={styles.title}>{title}</AnimatedText>
         {subtitle ? (
-          <AnimatedText delay={350} style={[styles.subtitle, compact && styles.subtitleCompact]}>
-            {subtitle}
-          </AnimatedText>
+          <AnimatedText delay={350} style={styles.subtitle}>{subtitle}</AnimatedText>
         ) : null}
       </View>
-      <View style={styles.goldDivider} />
+      <View style={styles.divider} />
     </View>
   );
 }
@@ -53,15 +46,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14
   },
-  copyCompact: {
-    paddingHorizontal: 14,
-    paddingVertical: 11
-  },
-  goldDivider: {
+  divider: {
     backgroundColor: colors.primary,
-    height: StyleSheet.hairlineWidth,
+    height: 1,
     marginHorizontal: 20,
-    opacity: 0.4
+    opacity: 0.3
   },
   subtitle: {
     color: colors.textMuted,
@@ -70,22 +59,17 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     letterSpacing: 0.3
   },
-  subtitleCompact: {
-    fontSize: 13
-  },
   title: {
     color: colors.text,
     fontFamily: "Cormorant",
-    fontSize: 28,
-    fontWeight: "700"
-  },
-  titleCompact: {
-    fontSize: 24
+    fontSize: 26,
+    fontWeight: "700",
+    letterSpacing: 0.3
   },
   wrap: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
     overflow: "hidden"
   }

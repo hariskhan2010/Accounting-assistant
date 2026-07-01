@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     right: 0
   },
   barGlow: {
-    backgroundColor: colors.glowGold,
+    backgroundColor: "rgba(201, 168, 76, 0.15)",
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     bottom: 0,

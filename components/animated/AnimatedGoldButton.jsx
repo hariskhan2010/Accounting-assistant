@@ -96,11 +96,11 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   primaryPressed: {
-    backgroundColor: colors.primaryDark
+    backgroundColor: "#A88A30"
   },
   secondaryPressed: {
     borderColor: colors.primaryLight,
-    backgroundColor: colors.glowGold
+    backgroundColor: "rgba(201, 168, 76, 0.1)"
   },
   text: {
     fontFamily: "Montserrat",

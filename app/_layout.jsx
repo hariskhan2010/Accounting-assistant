@@ -5,15 +5,13 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import * as Font from "expo-font";
 import { Cormorant_700Bold } from "@expo-google-fonts/cormorant";
 import { Montserrat_400Regular } from "@expo-google-fonts/montserrat";
-import { NotoNastaliqUrdu_400Regular } from "@expo-google-fonts/noto-nastaliq-urdu";
 import { colors } from "@/theme";
 
 export default function RootLayout() {
   if (Platform.OS !== "web") {
     Font.loadAsync({
       Cormorant: Cormorant_700Bold,
-      Montserrat: Montserrat_400Regular,
-      "Noto Nastaliq Urdu": NotoNastaliqUrdu_400Regular
+      Montserrat: Montserrat_400Regular
     }).catch(() => {});
   }
 

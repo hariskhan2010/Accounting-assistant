@@ -5,7 +5,7 @@ import { colors } from "@/theme";
 const statConfig = [
   { key: "total", label: "Total", icon: "cube-outline", color: colors.primary },
   { key: "pending", label: "Pending", icon: "time-outline", color: colors.warning },
-  { key: "shipped", label: "Shipped", icon: "send-outline", color: colors.secondary },
+  { key: "shipped", label: "Shipped", icon: "send-outline", color: colors.primary },
   { key: "revenue", label: "Revenue", icon: "cash-outline", color: colors.success }
 ];
 

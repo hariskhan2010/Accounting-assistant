@@ -1,12 +1,10 @@
 # Gems & Minerals Accounting App — Project Plan
 
-> A luxurious, AI-powered accounting system for gems, minerals, and raw material trading businesses, with an Urdu voice chatbot powered by Google Gemini 3 Pro and ElevenLabs.
-
 ---
 
 ## 1. App Overview
 
-A mobile and web application that handles the full financial lifecycle of a gems and minerals business — from raw material purchasing through cutting, polishing, lab testing, shipping, and final sale — with real-time stock management, profit tracking, staff payroll, and an AI voice assistant that understands and responds in Urdu.
+A mobile and web application that handles the full financial lifecycle of a gems and minerals business — from raw material purchasing through cutting, polishing, lab testing, shipping, and final sale — with real-time stock management, profit tracking, and staff payroll.
 
 ---
 
@@ -50,11 +48,6 @@ A mobile and web application that handles the full financial lifecycle of a gems
 - Per-company financial breakdown
 - Export to PDF and Excel
 
-### 2.7 Urdu Voice Chatbot
-- Speak a question in Urdu (e.g. "اس مہینے کی آمدنی کتنی ہے؟")
-- The assistant receives live business data context
-- The assistant responds with accurate financial answers in the user's language style
-
 ---
 
 ## 3. Tech Stack
@@ -76,12 +69,6 @@ A mobile and web application that handles the full financial lifecycle of a gems
 | Supabase Auth | OTP-based login and role management |
 | Supabase Storage | Invoice PDFs, product photos |
 | Supabase Edge Functions | Custom server logic if needed |
-
-### AI & Voice
-| Technology | Purpose |
-|---|---|
-| Google Gemini 3 Pro | AI chatbot — understands and answers in Urdu |
-| Gemini Live API | Live speech input and spoken responses |
 
 ### Export & Utilities
 | Technology | Purpose |
@@ -129,7 +116,7 @@ Tab bar:          rgba(21,21,31,0.85)
 | Subheading | Cormorant 18px | 600 |
 | Body | Montserrat 15px | 400 |
 | Label / Data | Montserrat 12-14px | 500-600 |
-| Urdu | Noto Nastaliq Urdu 16px | — |
+
 
 ### UI Conventions (from UI/UX Pro Max — Modern Dark)
 - `borderRadius: 16` on all cards and sheets (min `12`, max `20`)
@@ -194,7 +181,6 @@ closing_balance (id, period, opening_balance, total_sales, total_purchases, tota
     sales.jsx              ← Sales list and entry
     expenses.jsx           ← Expenses entry
     reports.jsx            ← Monthly/annual reports
-  /voice.jsx               ← Urdu voice chatbot screen
   /purchase/[id].jsx       ← Purchase detail
   /sale/[id].jsx           ← Sale detail
 
@@ -208,10 +194,6 @@ closing_balance (id, period, opening_balance, total_sales, total_purchases, tota
     RevenueChart.jsx
     StockChart.jsx
     ProfitChart.jsx
-  /voice
-    VoiceButton.jsx        ← Mic button with animation
-    ChatBubble.jsx         ← Voice conversation display (RTL Urdu support)
-
 /modules
   /accounting
     purchaseService.js
@@ -229,15 +211,12 @@ closing_balance (id, period, opening_balance, total_sales, total_purchases, tota
     excelExport.js
 
 /hooks
-  useVoiceChat.js          <- Voice conversation state
   useStock.js
   useRevenue.js
   useProfitSummary.js
 
 /services
   supabase.js              ← Supabase client
-  gemini.js                ← Gemini 3 Pro API wrapper
-  geminiLive.js            <- Gemini Live voice session settings
 
 /theme
   colors.js
@@ -247,36 +226,7 @@ closing_balance (id, period, opening_balance, total_sales, total_purchases, tota
 
 ---
 
-## 7. Urdu Voice Chatbot — Integration Flow
-
-```
-1. User presses mic button on voice screen
-2. App opens a live voice session
-4. Conversation text and live business data are used for financial answers
-5. The assistant speaks the response through the live audio stream
-```
-
-Example system prompt for Gemini 3 Pro:
-```
-You are a financial assistant for a gems and minerals trading business.
-The user will ask questions in Urdu. Always answer only in Urdu.
-Today's date is {date}.
-This month's revenue: {revenue}
-This month's expenses: {expenses}
-Current stock value: {stock_value}
-Net profit this month: {net_profit}
-Answer accurately, briefly, and in natural Urdu.
-```
-
-Example Urdu queries the chatbot will handle:
-- "اس مہینے کی آمدنی کتنی ہے؟" — What is this month's revenue?
-- "ابھی کتنا سٹاک باقی ہے؟" — How much stock is remaining?
-- "اس مہینے کا منافع کیا ہے؟" — What is this month's profit?
-- "ملازمین کی تنخواہ کتنی ہے؟" — What is the staff salary total?
-
----
-
-## 8. Two-Company Purchase Separation
+## 7. Two-Company Purchase Separation
 
 Every financial record includes a `company_id` field:
 
@@ -289,7 +239,7 @@ The dashboard will display three tabs or a dropdown to switch between entities. 
 
 ---
 
-## 9. Development Phases
+## 8. Development Phases
 
 ### Phase 1 — Foundation (Weeks 1–2)
 - [ ] Set up Supabase project and design full database schema
@@ -311,11 +261,7 @@ The dashboard will display three tabs or a dropdown to switch between entities. 
 - [ ] Profit & Loss reports
 - [ ] PDF and Excel export
 
-### Phase 4 — AI Voice Chatbot (Weeks 8–9)
-- [ ] Gemini-backed financial context with live DB data
-- [ ] Voice chatbot UI screen with RTL chat bubbles
-
-### Phase 5 — Polish & Deploy (Week 10)
+### Phase 4 — Polish & Deploy (Week 10)
 - [ ] UI/UX polish and luxury animations
 - [ ] Dashboard charts and KPIs
 - [ ] Testing on iOS and Android devices
@@ -323,34 +269,21 @@ The dashboard will display three tabs or a dropdown to switch between entities. 
 
 ---
 
-## 10. Estimated API Costs (Monthly)
+## 9. Estimated Costs (Monthly)
 
-| Service | Estimated Usage | Cost |
+| Service | Usage | Cost |
 |---|---|---|
-| Google Gemini 3 Pro | ~500 voice queries/month | ~$5–10 |
-| Gemini Live API | ~500 voice minutes/month | Google AI pricing dependent |
 | Supabase | Small business usage | Free tier or $25/month |
-| **Total** | | **~$13–46/month** |
+| **Total** | | **~$0–25/month** |
 
 ---
 
-## 11. Deployment
+## 10. Deployment
 
 - **Mobile**: EAS Build → `.ipa` (App Store) + `.apk/.aab` (Play Store)
 - **Web**: Expo Web → hosted on Vercel or Netlify
 - **Backend**: Supabase cloud (managed, no server required)
 - **Updates**: Expo OTA updates (no re-submission for JS changes)
 
-### Current Supabase Assistant Deployment
-
-- Project ref: `hyjfqsxavrykjzmaaasd`
-- Deployed Edge Functions: `urdu-gemini-assistant`, `gemini-live-token`, `urdu-elevenlabs-tts`
-- Secrets uploaded from `.env` using `npx.cmd supabase secrets set --env-file .env --project-ref hyjfqsxavrykjzmaaasd`
-- Verified on June 12, 2026 with `node scripts/check-assistant.js`
-- If Windows cannot find `supabase`, use `npx.cmd supabase ...`
-- `WARNING: Docker is not running` is acceptable for hosted deploys when the CLI still reports `Deployed Functions`.
-
----
-
-*Plan version 1.2 — Updated: Urdu voice (ur-PK), Google Gemini 3 Pro latest model, ElevenLabs TTS*
+*Plan version 2.0 — Voice assistant removed*
 

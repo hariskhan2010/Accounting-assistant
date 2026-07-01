@@ -14,7 +14,6 @@ export default function TabsLayout() {
       <Tabs.Screen name="minerals" options={{ title: "Minerals" }} />
       <Tabs.Screen name="staff" options={{ title: "Staff" }} />
       <Tabs.Screen name="reports" options={{ title: "Reports" }} />
-      <Tabs.Screen name="voice" options={{ title: "AI Assistant" }} />
     </Tabs>
   );
 }

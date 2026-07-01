@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontFamily: "Montserrat",
     fontWeight: "800",
-    fontSize: 12,
+    fontSize: 11,
     letterSpacing: 0.8,
     textTransform: "uppercase"
   },
@@ -116,25 +116,25 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   rowAlt: {
-    backgroundColor: "rgba(212, 175, 55, 0.03)"
+    backgroundColor: "rgba(201, 168, 76, 0.03)"
   },
   scrollContent: {
     flexGrow: 1
   },
   table: {
     backgroundColor: colors.surface,
-    borderColor: colors.borderLight,
-    borderRadius: 20,
+    borderColor: colors.border,
+    borderRadius: 16,
     borderWidth: 1,
     ...Platform.select({
       ios: {
-        shadowColor: "#D4AF37",
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.12,
-        shadowRadius: 14
+        shadowColor: colors.cardShadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius: 12
       },
       android: {
-        elevation: 6
+        elevation: 4
       }
     })
   }

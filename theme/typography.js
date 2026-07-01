@@ -33,20 +33,20 @@ export const typography = {
     lineHeight: 18
   },
   label: {
-    fontFamily: "Montserrat-Medium",
+    fontFamily: "Montserrat",
     fontWeight: "500",
     fontSize: 12,
     lineHeight: 16,
     letterSpacing: 0.5
   },
   data: {
-    fontFamily: "Montserrat-SemiBold",
+    fontFamily: "Montserrat",
     fontWeight: "600",
     fontSize: 20,
     fontVariant: ["tabular-nums"]
   },
   dataSmall: {
-    fontFamily: "Montserrat-Medium",
+    fontFamily: "Montserrat",
     fontWeight: "500",
     fontSize: 14,
     fontVariant: ["tabular-nums"]
@@ -57,17 +57,5 @@ export const typography = {
     fontSize: 11,
     lineHeight: 14,
     letterSpacing: 0.3
-  },
-  urdu: {
-    writingDirection: "rtl",
-    textAlign: "right",
-    fontFamily: "Noto Nastaliq Urdu"
-  },
-  urduBody: {
-    writingDirection: "rtl",
-    textAlign: "right",
-    fontFamily: "Noto Nastaliq Urdu",
-    fontSize: 16,
-    lineHeight: 28
   }
 };

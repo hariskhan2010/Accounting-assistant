@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -18,8 +18,7 @@ const iconMap = {
   expenses: { icon: "wallet", lib: "ion" },
   minerals: { icon: "diamond-stone", lib: "material" },
   staff: { icon: "people", lib: "ion" },
-  reports: { icon: "bar-chart", lib: "ion" },
-  voice: { icon: "chatbubbles", lib: "ion" }
+  reports: { icon: "bar-chart", lib: "ion" }
 };
 
 const TABS = [
@@ -32,8 +31,7 @@ const TABS = [
   { name: "expenses", label: "Spend" },
   { name: "minerals", label: "Minerals" },
   { name: "staff", label: "Staff" },
-  { name: "reports", label: "Reports" },
-  { name: "voice", label: "AI" }
+  { name: "reports", label: "Reports" }
 ];
 
 export function GoldTabBar({ state, descriptors, navigation }) {
@@ -42,7 +40,6 @@ export function GoldTabBar({ state, descriptors, navigation }) {
   const tabCount = state.routes.length;
   const tabWidth = (width - 16) / tabCount;
   const pillTranslate = useSharedValue(0);
-  const lastIdx = useRef(state.index);
 
   useEffect(() => {
     pillTranslate.value = withSpring(state.index * tabWidth, {
@@ -50,7 +47,6 @@ export function GoldTabBar({ state, descriptors, navigation }) {
       stiffness: 120,
       mass: 0.5
     });
-    lastIdx.current = state.index;
   }, [state.index, tabWidth]);
 
   const handleTabPress = useCallback(
@@ -75,24 +71,12 @@ export function GoldTabBar({ state, descriptors, navigation }) {
     const focused = state.index === idx;
     const iconInfo = iconMap[routeName] || { icon: "ellipse", lib: "ion" };
     const size = 20;
-    const color = focused ? colors.background : colors.textMuted;
+    const color = focused ? colors.background : colors.textDim;
 
     if (iconInfo.lib === "material") {
-      return (
-        <MaterialCommunityIcons
-          name={iconInfo.icon}
-          size={focused ? size + 1 : size}
-          color={color}
-        />
-      );
+      return <MaterialCommunityIcons name={iconInfo.icon} size={size} color={color} />;
     }
-    return (
-      <Ionicons
-        name={iconInfo.icon}
-        size={focused ? size + 1 : size}
-        color={color}
-      />
-    );
+    return <Ionicons name={iconInfo.icon} size={size} color={color} />;
   };
 
   return (
@@ -123,7 +107,7 @@ export function GoldTabBar({ state, descriptors, navigation }) {
                   style={[
                     styles.label,
                     focused && styles.labelActive,
-                    { color: focused ? colors.background : colors.textMuted }
+                    { color: focused ? colors.background : colors.textDim }
                   ]}
                   numberOfLines={1}
                 >
@@ -160,10 +144,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     left: 4,
     position: "absolute",
-    shadowColor: colors.primary,
+    shadowColor: "rgba(0,0,0,0.3)",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
     top: 3
   },
   tab: {

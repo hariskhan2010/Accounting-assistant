@@ -23,7 +23,7 @@ export function EmptyState({ icon = "default", title, subtitle, style }) {
   return (
     <View style={[styles.container, style]}>
       <View style={styles.iconCircle}>
-        <Ionicons name={iconDef.name} size={32} color={colors.primary} />
+        <Ionicons name={iconDef.name} size={28} color={colors.textDim} />
       </View>
       <Text style={styles.title}>{title}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
@@ -36,29 +36,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     paddingHorizontal: 32,
-    paddingVertical: 48
+    paddingVertical: 40
   },
   iconCircle: {
     alignItems: "center",
-    backgroundColor: colors.glowGold,
-    borderColor: colors.borderLight,
-    borderRadius: 32,
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: 28,
     borderWidth: StyleSheet.hairlineWidth,
-    height: 64,
+    height: 56,
     justifyContent: "center",
     marginBottom: 4,
-    width: 64
+    width: 56
   },
   subtitle: {
-    color: colors.textMuted,
+    color: colors.textDim,
     fontSize: 13,
     lineHeight: 20,
     textAlign: "center"
   },
   title: {
-    color: colors.primary,
+    color: colors.textMuted,
     fontFamily: "Cormorant",
-    fontSize: 20,
-    fontWeight: "700"
+    fontSize: 18,
+    fontWeight: "600"
   }
 });

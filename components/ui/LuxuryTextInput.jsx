@@ -1,10 +1,9 @@
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { StyleSheet, Text, TextInput as RNTextInput, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
-  withTiming
+  withSpring
 } from "react-native-reanimated";
 import { colors } from "@/theme";
 
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: "Montserrat",
     fontSize: 15,
-    minHeight: 48,
+    minHeight: 46,
     paddingHorizontal: 14,
     zIndex: 1
   },
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: colors.background,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: "center",
     overflow: "hidden"

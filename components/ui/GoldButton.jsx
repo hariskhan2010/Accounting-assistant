@@ -3,14 +3,12 @@ import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
-  withTiming
+  withSpring
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { colors } from "@/theme";
 
 const SPRING_CONFIG = { damping: 20, stiffness: 300 };
-const EASING = [0.16, 1, 0.3, 1];
 
 export function GoldButton({ title, icon, onPress, disabled, style, variant = "primary" }) {
   const scale = useSharedValue(1);
@@ -30,8 +28,6 @@ export function GoldButton({ title, icon, onPress, disabled, style, variant = "p
     transform: [{ scale: scale.value }]
   }));
 
-  const isPrimary = variant === "primary";
-
   return (
     <Animated.View style={animatedStyle}>
       <Pressable
@@ -42,16 +38,15 @@ export function GoldButton({ title, icon, onPress, disabled, style, variant = "p
         onPress={onPress}
         style={({ pressed }) => [
           styles.base,
-          isPrimary ? styles.primary : styles.secondary,
+          variant === "primary" && styles.primary,
+          variant === "secondary" && styles.secondary,
           variant === "ghost" && styles.ghost,
           disabled && styles.disabled,
-          pressed && !disabled && isPrimary && styles.primaryPressed,
-          pressed && !disabled && !isPrimary && styles.secondaryPressed,
-          style
+          pressed && !disabled && styles.pressed
         ]}
       >
         {icon ? <View style={styles.icon}>{icon}</View> : null}
-        <Text style={[styles.text, isPrimary && styles.primaryText, variant === "ghost" && styles.ghostText]}>
+        <Text style={[styles.text, variant === "primary" && styles.primaryText, variant === "ghost" && styles.ghostText]}>
           {title}
         </Text>
       </Pressable>
@@ -62,7 +57,7 @@ export function GoldButton({ title, icon, onPress, disabled, style, variant = "p
 const styles = StyleSheet.create({
   base: {
     alignItems: "center",
-    borderRadius: 16,
+    borderRadius: 14,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
@@ -75,7 +70,7 @@ const styles = StyleSheet.create({
   secondary: {
     backgroundColor: "transparent",
     borderColor: colors.primary,
-    borderWidth: 1.5
+    borderWidth: 1
   },
   ghost: {
     backgroundColor: "transparent",
@@ -87,12 +82,8 @@ const styles = StyleSheet.create({
   icon: {
     zIndex: 1
   },
-  primaryPressed: {
-    backgroundColor: colors.primaryDark
-  },
-  secondaryPressed: {
-    borderColor: colors.primaryLight,
-    backgroundColor: colors.glowGold
+  pressed: {
+    opacity: 0.85
   },
   text: {
     fontSize: 15,

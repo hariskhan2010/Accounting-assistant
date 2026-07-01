@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -43,27 +43,26 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 16,
     ...Platform.select({
       ios: {
-        shadowColor: "#D4AF37",
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.12,
-        shadowRadius: 14
+        shadowColor: colors.cardShadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 1,
+        shadowRadius: 12
       },
       android: {
-        elevation: 6
+        elevation: 4
       }
     })
   },
   elevated: {
     backgroundColor: colors.surfaceElevated,
-    borderColor: colors.borderLight,
     ...Platform.select({
       ios: {
-        shadowColor: colors.primary,
+        shadowColor: colors.cardShadow,
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
+        shadowOpacity: 1,
         shadowRadius: 16
       },
       android: {
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
     borderWidth: 1
   },
   inner: {
-    padding: 20,
+    padding: 16,
     zIndex: 1
   }
 });

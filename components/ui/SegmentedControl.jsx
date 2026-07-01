@@ -32,7 +32,6 @@ export function SegmentedControl({ options, value, onChange }) {
             >
               {option.name || option.label}
             </Text>
-            {active && <View style={styles.activeDot} />}
           </Pressable>
         );
       })}
@@ -42,16 +41,7 @@ export function SegmentedControl({ options, value, onChange }) {
 
 const styles = StyleSheet.create({
   active: {
-    backgroundColor: colors.glowGold
-  },
-  activeDot: {
-    backgroundColor: colors.primary,
-    borderRadius: 2,
-    bottom: 4,
-    height: 3,
-    left: "25%",
-    position: "absolute",
-    right: "25%"
+    backgroundColor: colors.surfaceElevated
   },
   activeText: {
     color: colors.primary,
@@ -63,35 +53,35 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     justifyContent: "center",
-    minHeight: 40,
+    minHeight: 38,
     minWidth: 88,
     paddingHorizontal: 8,
     paddingVertical: 8,
     position: "relative"
   },
   optionCompact: {
-    minHeight: 38,
+    minHeight: 36,
     minWidth: 72,
     paddingHorizontal: 6,
     paddingVertical: 7
   },
   optionPressed: {
-    backgroundColor: "rgba(255, 255, 255, 0.04)"
+    backgroundColor: "rgba(255, 255, 255, 0.03)"
   },
   text: {
-    color: colors.textMuted,
+    color: colors.textDim,
     fontFamily: "Montserrat",
     fontSize: 12,
-    fontWeight: "700",
+    fontWeight: "600",
     textAlign: "center"
   },
   textCompact: {
     fontSize: 11
   },
   wrap: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
     flexDirection: "row",
     flexWrap: "wrap",
@@ -99,7 +89,7 @@ const styles = StyleSheet.create({
     padding: 3
   },
   wrapCompact: {
-    borderRadius: 14,
+    borderRadius: 12,
     padding: 2
   }
 });
