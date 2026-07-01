@@ -13,17 +13,17 @@ serve(async (req) => {
 
   try {
     const payload = await req.json();
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const transaction = payload.transactions?.[0];
+    const stockId = transaction?.sku || null;
 
     const orderData = {
       platform: "etsy",
       platform_order_id: String(payload.receipt_id || ""),
-      stock_id: transaction?.sku || null,
+      stock_id: stockId,
       customer_name: payload.name || null,
       customer_email: payload.buyer_email || null,
       customer_phone: null,
@@ -42,9 +42,17 @@ serve(async (req) => {
       raw_payload: payload
     };
 
-    const { error } = await supabase.from("orders").insert(orderData);
+    const { error: insertError } = await supabase.from("orders").insert(orderData);
+    if (insertError) throw insertError;
 
-    if (error) throw error;
+    if (stockId) {
+      const { error: stockError } = await supabase
+        .from("stock_items")
+        .update({ status: "sold", updated_at: new Date().toISOString() })
+        .eq("stock_id", stockId)
+        .eq("status", "available");
+      if (stockError) console.error("Failed to update stock:", stockError.message);
+    }
 
     return new Response(JSON.stringify({ received: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }

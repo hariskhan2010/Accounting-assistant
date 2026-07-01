@@ -12,26 +12,27 @@ serve(async (req) => {
   }
 
   try {
-    const signature = req.headers.get("x-ebay-signature");
     const verificationToken = Deno.env.get("EBAY_WEBHOOK_VERIFICATION_TOKEN");
-
-    if (verificationToken && !signature) {
-      return new Response("Unauthorized", { status: 401, headers: corsHeaders });
+    if (verificationToken) {
+      const signature = req.headers.get("x-ebay-signature");
+      if (signature !== verificationToken) {
+        return new Response("Unauthorized", { status: 401, headers: corsHeaders });
+      }
     }
 
     const payload = await req.json();
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const lineItem = payload.lineItems?.[0];
     const shippingInfo = payload.fulfillmentStartInstructions?.[0]?.shippingStep?.shipTo;
+    const stockId = lineItem?.sku || null;
 
     const orderData = {
       platform: "ebay",
-      platform_order_id: payload.orderId || String(payload.orderId || ""),
-      stock_id: lineItem?.sku || null,
+      platform_order_id: String(payload.orderId || ""),
+      stock_id: stockId,
       customer_name: shippingInfo?.fullName || payload.buyer?.username || null,
       customer_email: payload.buyer?.email || null,
       customer_phone: payload.buyer?.phoneNumber || null,
@@ -43,9 +44,17 @@ serve(async (req) => {
       raw_payload: payload
     };
 
-    const { error } = await supabase.from("orders").insert(orderData);
+    const { error: insertError } = await supabase.from("orders").insert(orderData);
+    if (insertError) throw insertError;
 
-    if (error) throw error;
+    if (stockId) {
+      const { error: stockError } = await supabase
+        .from("stock_items")
+        .update({ status: "sold", updated_at: new Date().toISOString() })
+        .eq("stock_id", stockId)
+        .eq("status", "available");
+      if (stockError) console.error("Failed to update stock:", stockError.message);
+    }
 
     return new Response(JSON.stringify({ received: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
